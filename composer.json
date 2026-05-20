@@ -1,0 +1,8 @@
+{
+    "name": "ecorecicla/app",
+    "description": "EcoRecicla — Plataforma ciudadana de reciclaje",
+    "type": "project",
+    "require": {
+        "php": ">=8.1"
+    }
+}

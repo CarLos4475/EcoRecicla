@@ -1,0 +1,2599 @@
+<!doctype html>
+<html lang="es"><head><script data-od-sandbox-shim="">(function(){
+  function makeStore(){
+    var data = {};
+    var api = {
+      getItem: function(k){ return Object.prototype.hasOwnProperty.call(data, k) ? data[k] : null; },
+      setItem: function(k, v){ data[k] = String(v); },
+      removeItem: function(k){ delete data[k]; },
+      clear: function(){ data = {}; },
+      key: function(i){ return Object.keys(data)[i] || null; }
+    };
+    Object.defineProperty(api, 'length', { get: function(){ return Object.keys(data).length; } });
+    return api;
+  }
+  function tryShim(name){
+    var works = false;
+    try { works = !!window[name] && typeof window[name].getItem === 'function'; void window[name].length; }
+    catch (_) { works = false; }
+    if (works) return;
+    try { Object.defineProperty(window, name, { configurable: true, value: makeStore() }); }
+    catch (_) { try { window[name] = makeStore(); } catch (__) {} }
+  }
+  tryShim('localStorage');
+  tryShim('sessionStorage');
+  document.addEventListener('click', (e) => {
+    if (!e.target || !(e.target instanceof Element)) return;
+    var link = e.target.closest('a[href]');
+    if (!link) return;
+    var href = link.getAttribute('href');
+    if (href === null) return;
+    var isAnchor = href.startsWith('#') || href === '';
+    if (isAnchor) {
+      e.preventDefault();
+      if (href === '' || href === '#') {
+        window.scrollTo({ top: 0 });
+        history.replaceState(null, '', ' ');
+      } else {
+        var targetId = href.slice(1);
+        var target = targetId ? document.getElementById(targetId) : null;
+        if (target) {
+          target.scrollIntoView();
+          location.hash === href && history.replaceState(null, '', ' ');
+          location.hash = href;
+        }
+      }
+    } else if (link.getAttribute('target') === '_blank') {
+      e.preventDefault();
+      let safe = false;
+      try {
+        var url = new URL(href, location.href);
+        safe =
+          url.protocol === 'http:' ||
+          url.protocol === 'https:' ||
+          url.protocol === 'mailto:';
+      } catch (_) {}
+      safe && window.open(href, '_blank', 'noopener,noreferrer');
+    }
+  });
+})();</script>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>EcoRecicla — Recicla. Gana. Transforma.</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&amp;family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,700;1,9..40,300;1,9..40,400&amp;display=swap" rel="stylesheet">
+  <style>
+    /* ===========================================================
+       ECORECICLA — Magazine Editorial Web
+       Hackathon CDMX 2026
+       =========================================================== */
+
+    :root {
+      /* Brand tokens */
+      --bg:        #FAFAF8;
+      --surface:   #FFFFFF;
+      --fg:        #2C2C2A;
+      --muted:     #888780;
+      --border:    #D3D1C7;
+
+      --green-400: #639922;
+      --green-600: #3B6D11;
+      --green-800: #27500A;
+      --green-50:  #EAF3DE;
+      --green-100: #C0DD97;
+
+      --teal-400:  #1D9E75;
+      --teal-600:  #0F6E56;
+      --teal-50:   #E1F5EE;
+
+      --amber-200: #EF9F27;
+      --amber-400: #BA7517;
+      --amber-50:  #FAEEDA;
+
+      --accent:    var(--green-400);
+      --accent-2:  var(--teal-400);
+      --accent-3:  var(--amber-200);
+
+      --cream:     #F5F0E8;
+      --dark:      #1a1a18;
+
+      /* Typography */
+      --font-display: 'Playfair Display', Georgia, 'Times New Roman', serif;
+      --font-body:    'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+
+      /* Spacing */
+      --space-xs:  0.25rem;
+      --space-sm:  0.5rem;
+      --space-md:  1rem;
+      --space-lg:  2rem;
+      --space-xl:  4rem;
+      --space-2xl: 6rem;
+
+      /* Layout */
+      --max-w: 1280px;
+      --radius: 4px;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html {
+      scroll-behavior: smooth;
+      font-size: 16px;
+    }
+
+    body {
+      font-family: var(--font-body);
+      font-weight: 400;
+      line-height: 1.6;
+      color: var(--fg);
+      background: var(--bg);
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
+
+    img { max-width: 100%; display: block; }
+    a { color: inherit; text-decoration: none; }
+    button { font-family: inherit; cursor: pointer; border: none; background: none; }
+    input, select, textarea { font-family: inherit; font-size: inherit; }
+
+    /* Utility */
+    .container { max-width: var(--max-w); margin: 0 auto; padding: 0 var(--space-lg); }
+    .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); border: 0; }
+    .tag {
+      display: inline-block;
+      font-size: 0.65rem;
+      font-weight: 700;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      padding: 0.25em 0.6em;
+      border: 1px solid currentColor;
+      border-radius: 2px;
+    }
+    .tag--green { color: var(--green-600); border-color: var(--green-100); background: var(--green-50); }
+    .tag--teal { color: var(--teal-600); border-color: var(--teal-50); background: var(--teal-50); }
+    .tag--amber { color: var(--amber-400); border-color: var(--amber-50); background: var(--amber-50); }
+    .rule { border: none; border-top: 1px solid var(--border); margin: var(--space-xl) 0; }
+    .rule--dark { border-color: rgba(255,255,255,0.15); }
+
+    /* Scroll animation */
+    .fade-up {
+      opacity: 0;
+      transform: translateY(24px);
+      transition: opacity 0.6s cubic-bezier(0.23,1,0.32,1), transform 0.6s cubic-bezier(0.23,1,0.32,1);
+    }
+    .fade-up.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* ===========================================================
+       1. NEWS TICKER
+       =========================================================== */
+    .ticker {
+      background: var(--green-800);
+      color: var(--green-100);
+      font-size: 0.75rem;
+      font-weight: 500;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 0.5rem 0;
+      overflow: hidden;
+      position: relative;
+    }
+    .ticker__track {
+      display: flex;
+      width: max-content;
+      animation: ticker-scroll 40s linear infinite;
+    }
+    .ticker__item {
+      white-space: nowrap;
+      padding: 0 var(--space-xl);
+      display: flex;
+      align-items: center;
+      gap: var(--space-sm);
+    }
+    .ticker__item::before {
+      content: '';
+      width: 4px;
+      height: 4px;
+      background: var(--green-400);
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+    @keyframes ticker-scroll {
+      0% { transform: translateX(0); }
+      100% { transform: translateX(-50%); }
+    }
+
+    /* ===========================================================
+       2. NAVIGATION
+       =========================================================== */
+    .nav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(250, 250, 248, 0.92);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      transition: box-shadow 0.3s;
+    }
+    .nav.scrolled { box-shadow: 0 2px 20px rgba(0,0,0,0.06); }
+    .nav__inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 64px;
+      max-width: var(--max-w);
+      margin: 0 auto;
+      padding: 0 var(--space-lg);
+    }
+    .nav__logo {
+      display: flex;
+      align-items: center;
+      gap: var(--space-sm);
+      font-family: var(--font-display);
+      font-weight: 900;
+      font-size: 1.25rem;
+      color: var(--green-800);
+      letter-spacing: -0.02em;
+    }
+    .nav__logo svg { width: 28px; height: 28px; }
+    .nav__links {
+      display: flex;
+      align-items: center;
+      gap: var(--space-lg);
+      list-style: none;
+    }
+    .nav__links a {
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--muted);
+      transition: color 0.2s;
+      position: relative;
+    }
+    .nav__links a:hover { color: var(--fg); }
+    .nav__links a::after {
+      content: '';
+      position: absolute;
+      bottom: -4px;
+      left: 0;
+      width: 0;
+      height: 1px;
+      background: var(--accent);
+      transition: width 0.3s cubic-bezier(0.23,1,0.32,1);
+    }
+    .nav__links a:hover::after { width: 100%; }
+    .nav__cta {
+      font-size: 0.65rem;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      padding: 0.55em 1.2em;
+      background: var(--green-400);
+      color: #fff;
+      border-radius: var(--radius);
+      transition: background 0.2s;
+    }
+    .nav__cta:hover { background: var(--green-600); }
+    .nav__hamburger {
+      display: none;
+      flex-direction: column;
+      gap: 5px;
+      padding: 8px;
+    }
+    .nav__hamburger span {
+      display: block;
+      width: 22px;
+      height: 1.5px;
+      background: var(--fg);
+      transition: transform 0.3s, opacity 0.3s;
+    }
+    .nav__mobile {
+      display: none;
+      position: fixed;
+      top: 64px;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: var(--green-800);
+      z-index: 99;
+      padding: var(--space-xl) var(--space-lg);
+      transform: translateX(100%);
+      transition: transform 0.4s cubic-bezier(0.23,1,0.32,1);
+    }
+    .nav__mobile.open { transform: translateX(0); }
+    .nav__mobile a {
+      display: block;
+      font-family: var(--font-display);
+      font-size: 1.5rem;
+      color: var(--green-100);
+      padding: var(--space-md) 0;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+    }
+
+    /* ===========================================================
+       3. HERO
+       =========================================================== */
+    .hero {
+      background: var(--green-800);
+      color: #fff;
+      min-height: 92vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(ellipse at 20% 80%, rgba(99,153,34,0.15) 0%, transparent 60%),
+        radial-gradient(ellipse at 80% 20%, rgba(29,158,117,0.1) 0%, transparent 50%);
+      pointer-events: none;
+    }
+    .hero__inner {
+      position: relative;
+      z-index: 1;
+      max-width: var(--max-w);
+      margin: 0 auto;
+      padding: var(--space-2xl) var(--space-lg);
+      width: 100%;
+    }
+    .hero__eyebrow {
+      font-size: 0.65rem;
+      font-weight: 700;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--green-100);
+      margin-bottom: var(--space-lg);
+    }
+    .hero__title {
+      font-family: var(--font-display);
+      font-size: clamp(3.5rem, 10vw, 9rem);
+      font-weight: 900;
+      line-height: 0.92;
+      letter-spacing: -0.03em;
+      margin-bottom: var(--space-lg);
+    }
+    .hero__title em {
+      font-style: italic;
+      font-weight: 400;
+      color: var(--green-100);
+    }
+    .hero__subtitle {
+      font-family: var(--font-display);
+      font-size: clamp(1.1rem, 2vw, 1.5rem);
+      font-style: italic;
+      font-weight: 400;
+      color: rgba(255,255,255,0.7);
+      max-width: 480px;
+      margin-bottom: var(--space-xl);
+    }
+    .hero__actions {
+      display: flex;
+      gap: var(--space-md);
+      flex-wrap: wrap;
+      margin-bottom: var(--space-2xl);
+    }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--space-sm);
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      padding: 0.85em 1.8em;
+      border-radius: var(--radius);
+      transition: all 0.25s cubic-bezier(0.23,1,0.32,1);
+    }
+    .btn--primary {
+      background: var(--green-400);
+      color: #fff;
+    }
+    .btn--primary:hover { background: var(--green-600); transform: translateY(-1px); }
+    .btn--outline {
+      border: 1px solid rgba(255,255,255,0.3);
+      color: #fff;
+    }
+    .btn--outline:hover { border-color: #fff; background: rgba(255,255,255,0.05); }
+    .btn--dark {
+      background: var(--fg);
+      color: #fff;
+    }
+    .btn--dark:hover { background: var(--green-800); }
+    .btn--teal {
+      background: var(--teal-400);
+      color: #fff;
+    }
+    .btn--teal:hover { background: var(--teal-600); }
+    .hero__stats {
+      display: flex;
+      gap: var(--space-xl);
+      padding-top: var(--space-xl);
+      border-top: 1px solid rgba(255,255,255,0.12);
+      flex-wrap: wrap;
+    }
+    .hero__stat {
+      display: flex;
+      flex-direction: column;
+    }
+    .hero__stat-num {
+      font-family: var(--font-display);
+      font-size: clamp(1.8rem, 3vw, 2.5rem);
+      font-weight: 700;
+      color: var(--green-100);
+      line-height: 1.1;
+    }
+    .hero__stat-label {
+      font-size: 0.65rem;
+      font-weight: 700;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.45);
+      margin-top: var(--space-xs);
+    }
+
+    /* ===========================================================
+       4. QUICK ACCESS
+       =========================================================== */
+    .quick-access {
+      padding: var(--space-xl) 0;
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+    }
+    .quick-access__grid {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 1px;
+      background: var(--border);
+    }
+    .quick-access__item {
+      background: var(--surface);
+      padding: var(--space-lg) var(--space-md);
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: var(--space-sm);
+      transition: background 0.2s;
+      cursor: pointer;
+    }
+    .quick-access__item:hover { background: var(--green-50); }
+    .quick-access__icon {
+      width: 32px;
+      height: 32px;
+      color: var(--green-400);
+    }
+    .quick-access__label {
+      font-size: 0.65rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--fg);
+    }
+
+    /* ===========================================================
+       5. SERVICES
+       =========================================================== */
+    .services {
+      padding: var(--space-2xl) 0;
+    }
+    .section-header {
+      margin-bottom: var(--space-xl);
+    }
+    .section-header__tag {
+      margin-bottom: var(--space-sm);
+    }
+    .section-header__title {
+      font-family: var(--font-display);
+      font-size: clamp(2rem, 4vw, 3.2rem);
+      font-weight: 700;
+      line-height: 1.1;
+      letter-spacing: -0.02em;
+    }
+    .section-header__title em { font-style: italic; font-weight: 400; }
+    .section-header__desc {
+      font-size: 1rem;
+      color: var(--muted);
+      margin-top: var(--space-md);
+      max-width: 560px;
+      line-height: 1.7;
+    }
+    .services__grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: var(--space-lg);
+    }
+    .service-card {
+      padding: var(--space-lg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      transition: all 0.3s cubic-bezier(0.23,1,0.32,1);
+      position: relative;
+      overflow: hidden;
+    }
+    .service-card:hover {
+      border-color: var(--green-100);
+      box-shadow: 0 8px 32px rgba(39,80,10,0.08);
+      transform: translateY(-2px);
+    }
+    .service-card__num {
+      font-family: var(--font-display);
+      font-size: 2.5rem;
+      font-weight: 900;
+      color: var(--green-50);
+      line-height: 1;
+      margin-bottom: var(--space-md);
+    }
+    .service-card:hover .service-card__num { color: var(--green-100); }
+    .service-card__title {
+      font-family: var(--font-display);
+      font-size: 1.25rem;
+      font-weight: 700;
+      margin-bottom: var(--space-sm);
+    }
+    .service-card__desc {
+      font-size: 0.9rem;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
+    /* ===========================================================
+       6. HOW IT WORKS
+       =========================================================== */
+    .how-it-works {
+      padding: var(--space-2xl) 0;
+      background: var(--green-800);
+      color: #fff;
+    }
+    .how-it-works .section-header__tag { color: var(--green-100); border-color: rgba(255,255,255,0.15); }
+    .how-it-works .section-header__title { color: #fff; }
+    .how-it-works .section-header__desc { color: rgba(255,255,255,0.6); }
+    .steps {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: var(--space-lg);
+      counter-reset: step;
+    }
+    .step {
+      counter-increment: step;
+      position: relative;
+      padding-top: var(--space-lg);
+    }
+    .step::before {
+      content: counter(step, decimal-leading-zero);
+      font-family: var(--font-display);
+      font-size: 3.5rem;
+      font-weight: 900;
+      color: var(--green-400);
+      line-height: 1;
+      display: block;
+      margin-bottom: var(--space-md);
+    }
+    .step__title {
+      font-family: var(--font-display);
+      font-size: 1.15rem;
+      font-weight: 700;
+      margin-bottom: var(--space-sm);
+    }
+    .step__desc {
+      font-size: 0.9rem;
+      color: rgba(255,255,255,0.6);
+      line-height: 1.6;
+    }
+
+    /* ===========================================================
+       7. MATERIALS
+       =========================================================== */
+    .materials {
+      padding: var(--space-2xl) 0;
+      background: var(--cream);
+    }
+    .materials__grid {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 1px;
+      background: var(--border);
+    }
+    .material-card {
+      background: var(--surface);
+      padding: var(--space-xl) var(--space-lg);
+      display: flex;
+      gap: var(--space-lg);
+      transition: background 0.3s;
+    }
+    .material-card:hover { background: var(--green-50); }
+    .material-card__icon {
+      width: 48px;
+      height: 48px;
+      flex-shrink: 0;
+      color: var(--green-400);
+    }
+    .material-card__content { flex: 1; }
+    .material-card__tag { margin-bottom: var(--space-sm); }
+    .material-card__title {
+      font-family: var(--font-display);
+      font-size: 1.35rem;
+      font-weight: 700;
+      margin-bottom: var(--space-xs);
+    }
+    .material-card__desc {
+      font-size: 0.85rem;
+      color: var(--muted);
+      line-height: 1.6;
+      margin-bottom: var(--space-sm);
+    }
+    .material-card__points {
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--green-600);
+    }
+    .material-card--wide { grid-column: 1 / -1; }
+
+    /* ===========================================================
+       8. CONSULTATIONS & MANAGEMENT
+       =========================================================== */
+    .consultations {
+      padding: var(--space-2xl) 0;
+    }
+    .tabs {
+      display: flex;
+      gap: 0;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: var(--space-xl);
+      overflow-x: auto;
+    }
+    .tab {
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      padding: var(--space-md) var(--space-lg);
+      color: var(--muted);
+      border-bottom: 2px solid transparent;
+      transition: all 0.2s;
+      white-space: nowrap;
+    }
+    .tab:hover { color: var(--fg); }
+    .tab.active {
+      color: var(--green-600);
+      border-bottom-color: var(--green-400);
+    }
+    .tab-panel { display: none; }
+    .tab-panel.active { display: block; }
+    .form-group {
+      margin-bottom: var(--space-md);
+    }
+    .form-group label {
+      display: block;
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: var(--space-xs);
+    }
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+      width: 100%;
+      padding: 0.7em 1em;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: var(--surface);
+      color: var(--fg);
+      transition: border-color 0.2s;
+    }
+    .form-group input:focus,
+    .form-group select:focus,
+    .form-group textarea:focus {
+      outline: none;
+      border-color: var(--green-400);
+    }
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--space-md);
+    }
+    .points-result {
+      margin-top: var(--space-md);
+      padding: var(--space-md);
+      background: var(--green-50);
+      border: 1px solid var(--green-100);
+      border-radius: var(--radius);
+      font-family: var(--font-display);
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--green-800);
+      display: none;
+    }
+    .points-result.show { display: block; }
+    .history-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    .history-table th,
+    .history-table td {
+      text-align: left;
+      padding: var(--space-sm) var(--space-md);
+      border-bottom: 1px solid var(--border);
+      font-size: 0.85rem;
+    }
+    .history-table th {
+      font-size: 0.65rem;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--muted);
+      padding-bottom: var(--space-md);
+    }
+    .status-badge {
+      display: inline-block;
+      font-size: 0.6rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 0.2em 0.5em;
+      border-radius: 2px;
+    }
+    .status-badge--acreditado { background: var(--green-50); color: var(--green-600); }
+    .status-badge--pendiente { background: var(--amber-50); color: var(--amber-400); }
+    .status-badge--rechazado { background: #fde8e8; color: #c0392b; }
+    .redeem-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: var(--space-md);
+    }
+    .reward-card {
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: var(--space-md);
+      text-align: center;
+      transition: all 0.2s;
+    }
+    .reward-card:hover { border-color: var(--green-100); box-shadow: 0 4px 16px rgba(0,0,0,0.06); }
+    .reward-card__cost {
+      font-family: var(--font-display);
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--green-600);
+      margin: var(--space-sm) 0;
+    }
+    .reward-card__name {
+      font-size: 0.9rem;
+      font-weight: 500;
+      margin-bottom: var(--space-xs);
+    }
+    .reward-card__cat {
+      font-size: 0.65rem;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+    }
+
+    /* ===========================================================
+       9. GREEN POINTS
+       =========================================================== */
+    .green-points {
+      padding: var(--space-2xl) 0;
+      background: var(--surface);
+    }
+    .gp-layout {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--space-xl);
+    }
+    .gp-map {
+      background: var(--green-50);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      min-height: 400px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      gap: var(--space-md);
+      color: var(--muted);
+    }
+    .gp-map svg { width: 48px; height: 48px; opacity: 0.4; }
+    .gp-map__label {
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+    }
+    .gp-list { display: flex; flex-direction: column; gap: var(--space-sm); }
+    .gp-item {
+      padding: var(--space-md);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      transition: all 0.2s;
+    }
+    .gp-item:hover { border-color: var(--green-100); background: var(--green-50); }
+    .gp-item__name {
+      font-family: var(--font-display);
+      font-size: 1rem;
+      font-weight: 700;
+      margin-bottom: var(--space-xs);
+    }
+    .gp-item__addr {
+      font-size: 0.85rem;
+      color: var(--muted);
+      margin-bottom: var(--space-xs);
+    }
+    .gp-item__meta {
+      display: flex;
+      gap: var(--space-sm);
+      flex-wrap: wrap;
+    }
+
+    /* ===========================================================
+       10. NEWS & PROMOTIONS
+       =========================================================== */
+    .news {
+      padding: var(--space-2xl) 0;
+      background: var(--cream);
+    }
+    .news__layout {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: var(--space-lg);
+      margin-bottom: var(--space-xl);
+    }
+    .news__featured {
+      position: relative;
+      background: var(--green-800);
+      color: #fff;
+      padding: var(--space-xl);
+      border-radius: var(--radius);
+      min-height: 360px;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      overflow: hidden;
+    }
+    .news__featured::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to top, rgba(39,80,10,0.95) 0%, rgba(39,80,10,0.3) 60%, transparent 100%);
+    }
+    .news__featured > * { position: relative; z-index: 1; }
+    .news__featured-tag { margin-bottom: var(--space-sm); color: var(--green-100); border-color: rgba(255,255,255,0.2); }
+    .news__featured-title {
+      font-family: var(--font-display);
+      font-size: clamp(1.5rem, 3vw, 2.2rem);
+      font-weight: 700;
+      line-height: 1.15;
+      margin-bottom: var(--space-sm);
+    }
+    .news__featured-desc {
+      font-size: 0.9rem;
+      color: rgba(255,255,255,0.7);
+      line-height: 1.6;
+    }
+    .news__sidebar {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-sm);
+    }
+    .news__side-item {
+      padding: var(--space-md);
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      transition: all 0.2s;
+    }
+    .news__side-item:hover { border-color: var(--green-100); }
+    .news__side-item .tag { margin-bottom: var(--space-xs); }
+    .news__side-title {
+      font-family: var(--font-display);
+      font-size: 1rem;
+      font-weight: 700;
+      line-height: 1.3;
+    }
+    .promos {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: var(--space-md);
+    }
+    .promo-card {
+      position: relative;
+      border-radius: var(--radius);
+      overflow: hidden;
+      min-height: 200px;
+      display: flex;
+      align-items: flex-end;
+      padding: var(--space-md);
+      color: #fff;
+    }
+    .promo-card::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to top, rgba(0,0,0,0.7) 0%, transparent 60%);
+    }
+    .promo-card > * { position: relative; z-index: 1; }
+    .promo-card--green { background: var(--green-600); }
+    .promo-card--teal { background: var(--teal-600); }
+    .promo-card--amber { background: var(--amber-400); }
+    .promo-card__title {
+      font-family: var(--font-display);
+      font-size: 1.1rem;
+      font-weight: 700;
+    }
+    .promo-card__desc {
+      font-size: 0.8rem;
+      opacity: 0.8;
+      margin-top: var(--space-xs);
+    }
+
+    /* ===========================================================
+       11. ADMIN PANEL
+       =========================================================== */
+    .admin {
+      padding: var(--space-2xl) 0;
+    }
+    .admin__login {
+      max-width: 400px;
+      margin: 0 auto;
+      text-align: center;
+    }
+    .admin__login-title {
+      font-family: var(--font-display);
+      font-size: 1.8rem;
+      font-weight: 700;
+      margin-bottom: var(--space-md);
+    }
+    .admin__login-desc {
+      font-size: 0.9rem;
+      color: var(--muted);
+      margin-bottom: var(--space-lg);
+    }
+    .admin__dashboard { display: none; }
+    .admin__dashboard.show { display: block; }
+    .admin__metrics {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: var(--space-md);
+      margin-bottom: var(--space-xl);
+    }
+    .metric-card {
+      padding: var(--space-md);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      text-align: center;
+    }
+    .metric-card__num {
+      font-family: var(--font-display);
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--green-600);
+    }
+    .metric-card__label {
+      font-size: 0.65rem;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-top: var(--space-xs);
+    }
+    .admin__tabs {
+      display: flex;
+      gap: 0;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: var(--space-lg);
+    }
+    .admin__tab {
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      padding: var(--space-sm) var(--space-md);
+      color: var(--muted);
+      border-bottom: 2px solid transparent;
+    }
+    .admin__tab.active { color: var(--green-600); border-bottom-color: var(--green-400); }
+    .admin__panel { display: none; }
+    .admin__panel.active { display: block; }
+    .admin__table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    .admin__table th,
+    .admin__table td {
+      text-align: left;
+      padding: var(--space-sm) var(--space-md);
+      border-bottom: 1px solid var(--border);
+      font-size: 0.85rem;
+    }
+    .admin__table th {
+      font-size: 0.65rem;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--muted);
+      padding-bottom: var(--space-md);
+    }
+    .admin__actions {
+      display: flex;
+      gap: var(--space-xs);
+    }
+    .admin__actions button {
+      font-size: 0.65rem;
+      font-weight: 700;
+      padding: 0.3em 0.6em;
+      border-radius: 2px;
+      transition: all 0.15s;
+    }
+    .admin__actions .edit-btn { color: var(--teal-600); background: var(--teal-50); }
+    .admin__actions .edit-btn:hover { background: var(--teal-400); color: #fff; }
+    .admin__actions .del-btn { color: #c0392b; background: #fde8e8; }
+    .admin__actions .del-btn:hover { background: #c0392b; color: #fff; }
+    .admin__add-form {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: var(--space-sm);
+      margin-bottom: var(--space-md);
+      padding: var(--space-md);
+      background: var(--green-50);
+      border-radius: var(--radius);
+    }
+    .admin__add-form input,
+    .admin__add-form select {
+      padding: 0.5em 0.7em;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      font-size: 0.85rem;
+    }
+    .admin__add-form .btn { justify-self: start; }
+
+    /* ===========================================================
+       12. FOOTER
+       =========================================================== */
+    .footer {
+      background: var(--dark);
+      color: rgba(255,255,255,0.6);
+      padding: var(--space-2xl) 0 var(--space-xl);
+    }
+    .footer__grid {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr 1fr;
+      gap: var(--space-xl);
+      margin-bottom: var(--space-xl);
+    }
+    .footer__brand-name {
+      font-family: var(--font-display);
+      font-size: 1.5rem;
+      font-weight: 900;
+      color: #fff;
+      margin-bottom: var(--space-md);
+    }
+    .footer__brand-desc {
+      font-size: 0.9rem;
+      line-height: 1.7;
+      max-width: 320px;
+    }
+    .footer__col-title {
+      font-size: 0.65rem;
+      font-weight: 700;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.35);
+      margin-bottom: var(--space-md);
+    }
+    .footer__col a {
+      display: block;
+      font-size: 0.9rem;
+      padding: var(--space-xs) 0;
+      transition: color 0.2s;
+    }
+    .footer__col a:hover { color: #fff; }
+    .footer__bottom {
+      padding-top: var(--space-lg);
+      border-top: 1px solid rgba(255,255,255,0.08);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.8rem;
+      flex-wrap: wrap;
+      gap: var(--space-md);
+    }
+
+    /* ===========================================================
+       SEARCH OVERLAY
+       =========================================================== */
+    .search-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 200;
+      background: rgba(0,0,0,0.6);
+      backdrop-filter: blur(4px);
+      display: none;
+      align-items: flex-start;
+      justify-content: center;
+      padding-top: 15vh;
+    }
+    .search-overlay.open { display: flex; }
+    .search-box {
+      background: var(--surface);
+      border-radius: var(--radius);
+      width: 90%;
+      max-width: 600px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+      overflow: hidden;
+    }
+    .search-box__input {
+      display: flex;
+      align-items: center;
+      padding: var(--space-md) var(--space-lg);
+      border-bottom: 1px solid var(--border);
+    }
+    .search-box__input svg { width: 20px; height: 20px; color: var(--muted); margin-right: var(--space-sm); flex-shrink: 0; }
+    .search-box__input input {
+      flex: 1;
+      border: none;
+      outline: none;
+      font-size: 1rem;
+      background: transparent;
+    }
+    .search-box__results {
+      max-height: 400px;
+      overflow-y: auto;
+      padding: var(--space-sm) 0;
+    }
+    .search-box__result {
+      padding: var(--space-sm) var(--space-lg);
+      display: flex;
+      align-items: center;
+      gap: var(--space-sm);
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+    .search-box__result:hover { background: var(--green-50); }
+    .search-box__result-icon {
+      width: 16px;
+      height: 16px;
+      color: var(--muted);
+      flex-shrink: 0;
+    }
+    .search-box__result-text {
+      font-size: 0.9rem;
+    }
+    .search-box__result-text mark {
+      background: var(--green-50);
+      color: var(--green-800);
+      padding: 0 2px;
+      border-radius: 2px;
+    }
+    .search-box__empty {
+      padding: var(--space-xl) var(--space-lg);
+      text-align: center;
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+
+    /* ===========================================================
+       TOAST NOTIFICATIONS
+       =========================================================== */
+    .toast-container {
+      position: fixed;
+      bottom: var(--space-lg);
+      right: var(--space-lg);
+      z-index: 300;
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-sm);
+    }
+    .toast {
+      background: var(--fg);
+      color: #fff;
+      padding: var(--space-md) var(--space-lg);
+      border-radius: var(--radius);
+      font-size: 0.85rem;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+      transform: translateX(120%);
+      transition: transform 0.4s cubic-bezier(0.23,1,0.32,1);
+      max-width: 360px;
+    }
+    .toast.show { transform: translateX(0); }
+    .toast--success { border-left: 3px solid var(--green-400); }
+    .toast--error { border-left: 3px solid #c0392b; }
+    .toast--info { border-left: 3px solid var(--teal-400); }
+
+    /* ===========================================================
+       RESPONSIVE
+       =========================================================== */
+    @media (max-width: 1024px) {
+      .services__grid { grid-template-columns: repeat(2, 1fr); }
+      .steps { grid-template-columns: repeat(2, 1fr); }
+      .gp-layout { grid-template-columns: 1fr; }
+      .footer__grid { grid-template-columns: 1fr 1fr; }
+      .admin__metrics { grid-template-columns: repeat(2, 1fr); }
+    }
+
+    @media (max-width: 768px) {
+      .nav__links { display: none; }
+      .nav__cta { display: none; }
+      .nav__hamburger { display: flex; }
+      .nav__mobile { display: block; }
+
+      .hero__title { font-size: clamp(2.8rem, 12vw, 5rem); }
+      .hero__stats { gap: var(--space-lg); }
+
+      .quick-access__grid { grid-template-columns: repeat(3, 1fr); }
+
+      .services__grid { grid-template-columns: 1fr; }
+      .steps { grid-template-columns: 1fr; gap: var(--space-xl); }
+
+      .materials__grid { grid-template-columns: 1fr; }
+
+      .form-row { grid-template-columns: 1fr; }
+      .redeem-grid { grid-template-columns: repeat(2, 1fr); }
+
+      .news__layout { grid-template-columns: 1fr; }
+      .promos { grid-template-columns: 1fr; }
+
+      .admin__metrics { grid-template-columns: 1fr 1fr; }
+      .admin__add-form { grid-template-columns: 1fr; }
+
+      .footer__grid { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 480px) {
+      .quick-access__grid { grid-template-columns: repeat(2, 1fr); }
+      .redeem-grid { grid-template-columns: 1fr; }
+      .admin__metrics { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ============================================================
+       1. NEWS TICKER
+       ============================================================ -->
+  <div class="ticker" aria-label="Últimas novedades" data-od-id="path-0">
+    <div class="ticker__track" id="ticker-track" data-od-id="path-0-0">
+      <span class="ticker__item">Nuevo punto verde en Coyoacán — abre Lun–Sáb 8–18h</span>
+      <span class="ticker__item">Doble puntos en electrónicos durante mayo</span>
+      <span class="ticker__item">1,240 usuarios activos en CDMX</span>
+      <span class="ticker__item">8.4 toneladas recicladas este trimestre</span>
+      <span class="ticker__item">Promo: Café gratis por 50 ecopuntos</span>
+      <span class="ticker__item">Evento comunitario de reciclaje — Xochimilco, 15 de junio</span>
+      <!-- Duplicate for seamless loop -->
+      <span class="ticker__item">Nuevo punto verde en Coyoacán — abre Lun–Sáb 8–18h</span>
+      <span class="ticker__item">Doble puntos en electrónicos durante mayo</span>
+      <span class="ticker__item">1,240 usuarios activos en CDMX</span>
+      <span class="ticker__item">8.4 toneladas recicladas este trimestre</span>
+      <span class="ticker__item">Promo: Café gratis por 50 ecopuntos</span>
+      <span class="ticker__item">Evento comunitario de reciclaje — Xochimilco, 15 de junio</span>
+    </div>
+  </div>
+
+  <!-- ============================================================
+       2. NAVIGATION
+       ============================================================ -->
+  <nav class="nav" id="nav" data-od-id="path-1">
+    <div class="nav__inner" data-od-id="path-1-0">
+      <a href="#" class="nav__logo" data-od-id="path-1-0-0">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M7 19H4.815a1.83 1.83 0 0 1-1.57-.881 1.785 1.785 0 0 1-.004-1.784L7.196 9.5"></path>
+          <path d="M11 19h8.203a1.83 1.83 0 0 0 1.556-.888 1.785 1.785 0 0 0 .007-1.775l-1.14-1.719"></path>
+          <path d="m14 16-3 5 3 5"></path>
+          <path d="M8.293 9.757 4.424 3.87a1.83 1.83 0 0 1 .017-1.799 1.785 1.785 0 0 1 1.57-.871h4.118"></path>
+          <path d="m15.707 14.243 3.871 5.887a1.83 1.83 0 0 1-.018 1.799 1.785 1.785 0 0 1-1.57.871h-4.118"></path>
+        </svg>
+        EcoRecicla
+      </a>
+      <ul class="nav__links">
+        <li><a href="#servicios" data-od-id="path-1-0-1-0-0">Servicios</a></li>
+        <li><a href="#materiales" data-od-id="path-1-0-1-1-0">Materiales</a></li>
+        <li><a href="#consultas" data-od-id="path-1-0-1-2-0">Consultas</a></li>
+        <li><a href="#puntos-verdes" data-od-id="path-1-0-1-3-0">Puntos Verdes</a></li>
+        <li><a href="#novedades" data-od-id="path-1-0-1-4-0">Novedades</a></li>
+        <li><a href="#admin" data-od-id="path-1-0-1-5-0">Admin</a></li>
+      </ul>
+      <button class="nav__cta" onclick="showToast('Registro próximamente', 'info')" data-od-id="path-1-0-2">Registrarse</button>
+      <button class="nav__hamburger" id="hamburger" aria-label="Menú" onclick="toggleMobileMenu()" data-od-id="path-1-0-3">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+    <div class="nav__mobile" id="mobile-menu" data-od-id="path-1-1">
+      <a href="#servicios" onclick="closeMobileMenu()" data-od-id="path-1-1-0">Servicios</a>
+      <a href="#materiales" onclick="closeMobileMenu()" data-od-id="path-1-1-1">Materiales</a>
+      <a href="#consultas" onclick="closeMobileMenu()" data-od-id="path-1-1-2">Consultas</a>
+      <a href="#puntos-verdes" onclick="closeMobileMenu()" data-od-id="path-1-1-3">Puntos Verdes</a>
+      <a href="#novedades" onclick="closeMobileMenu()" data-od-id="path-1-1-4">Novedades</a>
+      <a href="#admin" onclick="closeMobileMenu()" data-od-id="path-1-1-5">Admin</a>
+    </div>
+  </nav>
+
+  <!-- ============================================================
+       3. HERO
+       ============================================================ -->
+  <section class="hero" id="hero" data-od-id="path-2">
+    <div class="hero__inner" data-od-id="path-2-0">
+      <p class="hero__eyebrow">Plataforma ciudadana de reciclaje — CDMX 2026</p>
+      <h1 class="hero__title" data-od-id="path-2-0-1">ECO<em>RECICLA</em></h1>
+      <p class="hero__subtitle">Recicla. Gana. Transforma. Tu esfuerzo por el planeta tiene recompensa.</p>
+      <div class="hero__actions">
+        <a href="#consultas" class="btn btn--primary" data-od-id="path-2-0-3-0">Registrar entrega</a>
+        <a href="#puntos-verdes" class="btn btn--outline" data-od-id="path-2-0-3-1">Ver puntos verdes</a>
+      </div>
+      <div class="hero__stats">
+        <div class="hero__stat">
+          <span class="hero__stat-num" data-count="1240">0</span>
+          <span class="hero__stat-label">Usuarios activos</span>
+        </div>
+        <div class="hero__stat">
+          <span class="hero__stat-num" data-count="8.4" data-suffix=" T">0</span>
+          <span class="hero__stat-label">Toneladas recicladas</span>
+        </div>
+        <div class="hero__stat">
+          <span class="hero__stat-num" data-count="23">0</span>
+          <span class="hero__stat-label">Puntos verdes</span>
+        </div>
+        <div class="hero__stat">
+          <span class="hero__stat-num" data-count="47500" data-prefix="">0</span>
+          <span class="hero__stat-label">Ecopuntos canjeados</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       4. QUICK ACCESS
+       ============================================================ -->
+  <section class="quick-access" id="acceso-rapido" data-od-id="path-3">
+    <div class="container" data-od-id="path-3-0">
+      <div class="quick-access__grid">
+        <a href="#consultas" class="quick-access__item" data-od-id="path-3-0-0-0">
+          <svg class="quick-access__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14"></path><path d="M5 12h14"></path></svg>
+          <span class="quick-access__label">Registrar</span>
+        </a>
+        <a href="#consultas" class="quick-access__item" data-od-id="path-3-0-0-1">
+          <svg class="quick-access__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.3-4.3"></path></svg>
+          <span class="quick-access__label">Consultar</span>
+        </a>
+        <a href="#consultas" class="quick-access__item" data-od-id="path-3-0-0-2">
+          <svg class="quick-access__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-6.219-8.56"></path></svg>
+          <span class="quick-access__label">Historial</span>
+        </a>
+        <a href="#consultas" class="quick-access__item" data-od-id="path-3-0-0-3">
+          <svg class="quick-access__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 12v6a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-6"></path><path d="M4 8h16"></path><path d="M8 4v4"></path><path d="M12 4v4"></path><path d="M16 4v4"></path></svg>
+          <span class="quick-access__label">Canjear</span>
+        </a>
+        <a href="#puntos-verdes" class="quick-access__item" data-od-id="path-3-0-0-4">
+          <svg class="quick-access__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+          <span class="quick-access__label">Mapa</span>
+        </a>
+        <a href="#" class="quick-access__item" onclick="openSearch(); return false;" data-od-id="path-3-0-0-5">
+          <svg class="quick-access__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.3-4.3"></path></svg>
+          <span class="quick-access__label">Buscar</span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       5. SERVICES
+       ============================================================ -->
+  <section class="services" id="servicios" data-od-id="path-4">
+    <div class="container" data-od-id="path-4-0">
+      <div class="section-header fade-up">
+        <span class="tag tag--green section-header__tag">SERVICIOS</span>
+        <h2 class="section-header__title" data-od-id="path-4-0-0-1">Todo lo que <em>EcoRecicla</em> hace por ti</h2>
+        <p class="section-header__desc">Una plataforma completa para gestionar tu reciclaje, acumular puntos y canjearlos en comercios locales de CDMX.</p>
+      </div>
+      <div class="services__grid">
+        <div class="service-card fade-up">
+          <div class="service-card__num">01</div>
+          <h3 class="service-card__title" data-od-id="path-4-0-1-0-1">Información general</h3>
+          <p class="service-card__desc">Conoce el impacto colectivo, cómo funciona el sistema de ecopuntos y qué materiales puedes reciclar.</p>
+        </div>
+        <div class="service-card fade-up">
+          <div class="service-card__num">02</div>
+          <h3 class="service-card__title" data-od-id="path-4-0-1-1-1">Consulta de puntos</h3>
+          <p class="service-card__desc">Revisa tu saldo de ecopuntos y tu historial de entregas en cualquier momento desde tu cuenta.</p>
+        </div>
+        <div class="service-card fade-up">
+          <div class="service-card__num">03</div>
+          <h3 class="service-card__title" data-od-id="path-4-0-1-2-1">Registro de entregas</h3>
+          <p class="service-card__desc">Registra cada entrega de material reciclable y acumula puntos automáticamente según el tipo y peso.</p>
+        </div>
+        <div class="service-card fade-up">
+          <div class="service-card__num">04</div>
+          <h3 class="service-card__title" data-od-id="path-4-0-1-3-1">Canje de recompensas</h3>
+          <p class="service-card__desc"> intercambia tus ecopuntos por café gratis, descuentos en transporte, productos y más.</p>
+        </div>
+        <div class="service-card fade-up">
+          <div class="service-card__num">05</div>
+          <h3 class="service-card__title" data-od-id="path-4-0-1-4-1">Puntos verdes</h3>
+          <p class="service-card__desc">Encuentra el centro de acopio más cercano con su horario, materiales aceptados y estado operativo.</p>
+        </div>
+        <div class="service-card fade-up">
+          <div class="service-card__num">06</div>
+          <h3 class="service-card__title" data-od-id="path-4-0-1-5-1">Panel de administración</h3>
+          <p class="service-card__desc">Gestiona usuarios, puntos verdes, entregas y exporta datos para análisis y reportes.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       6. HOW IT WORKS
+       ============================================================ -->
+  <section class="how-it-works" id="como-funciona" data-od-id="path-5">
+    <div class="container" data-od-id="path-5-0">
+      <div class="section-header fade-up">
+        <span class="tag section-header__tag" style="color:var(--green-100);border-color:rgba(255,255,255,0.15)">CÓMO FUNCIONA</span>
+        <h2 class="section-header__title" data-od-id="path-5-0-0-1">Cuatro pasos para <em>empezar</em></h2>
+        <p class="section-header__desc">El proceso es simple: lleva tu material, regístralo, acumula puntos y canjéalos.</p>
+      </div>
+      <div class="steps">
+        <div class="step fade-up">
+          <h3 class="step__title" data-od-id="path-5-0-1-0-0">Separa tu material</h3>
+          <p class="step__desc">Clasifica plástico, vidrio, papel, metal, orgánicos o electrónicos según las guías de cada material.</p>
+        </div>
+        <div class="step fade-up">
+          <h3 class="step__title" data-od-id="path-5-0-1-1-0">Lleva a un punto verde</h3>
+          <p class="step__desc">Encuentra el centro de acopio más cercano en tu delegación. Horarios de Lun a Sáb.</p>
+        </div>
+        <div class="step fade-up">
+          <h3 class="step__title" data-od-id="path-5-0-1-2-0">Registra tu entrega</h3>
+          <p class="step__desc">Un operador verifica y registra tu entrega. Los puntos se calculan automáticamente por tipo y peso.</p>
+        </div>
+        <div class="step fade-up">
+          <h3 class="step__title" data-od-id="path-5-0-1-3-0">Canjea recompensas</h3>
+          <p class="step__desc">Usa tus ecopuntos en comercios locales: café, transporte, descuentos y productos sustentables.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       7. MATERIALS
+       ============================================================ -->
+  <section class="materials" id="materiales" data-od-id="path-6">
+    <div class="container" data-od-id="path-6-0">
+      <div class="section-header fade-up">
+        <span class="tag tag--green section-header__tag">MATERIALES RECICLABLES</span>
+        <h2 class="section-header__title" data-od-id="path-6-0-0-1">Qué puedes <em>reciclar</em></h2>
+        <p class="section-header__desc">Cada material tiene un valor en ecopuntos. Conoce las tasas y cómo preparar cada tipo para entrega.</p>
+      </div>
+    </div>
+    <div class="container" style="padding-top:0;" data-od-id="path-6-1">
+      <div class="materials__grid fade-up">
+        <div class="material-card">
+          <svg class="material-card__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z"></path><path d="m8 12 3 3 5-5"></path></svg>
+          <div class="material-card__content">
+            <span class="tag tag--green material-card__tag">PLÁSTICO</span>
+            <h3 class="material-card__title" data-od-id="path-6-1-0-0-1-1">Plástico PET y envases</h3>
+            <p class="material-card__desc">Botellas de agua, refrescos, envases de shampoo y productos de limpieza. Enjuagar y aplastar antes de entregar.</p>
+            <span class="material-card__points">+5 pts / 100g</span>
+          </div>
+        </div>
+        <div class="material-card">
+          <svg class="material-card__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z"></path><path d="m8 12 3 3 5-5"></path></svg>
+          <div class="material-card__content">
+            <span class="tag tag--teal material-card__tag">VIDRIO</span>
+            <h3 class="material-card__title" data-od-id="path-6-1-0-1-1-1">Vidrio</h3>
+            <p class="material-card__desc">Botellas, frascos y envases de vidrio. Sin tapas ni etiquetas. Separar por color si es posible.</p>
+            <span class="material-card__points">+4 pts / 100g</span>
+          </div>
+        </div>
+        <div class="material-card">
+          <svg class="material-card__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z"></path><path d="m8 12 3 3 5-5"></path></svg>
+          <div class="material-card__content">
+            <span class="tag tag--amber material-card__tag">PAPEL</span>
+            <h3 class="material-card__title" data-od-id="path-6-1-0-2-1-1">Papel y cartón</h3>
+            <p class="material-card__desc">Periódicos, revistas, cajas de cartón, hojas de papel. Sin contaminar con alimentos.</p>
+            <span class="material-card__points">+3 pts / 100g</span>
+          </div>
+        </div>
+        <div class="material-card">
+          <svg class="material-card__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z"></path><path d="m8 12 3 3 5-5"></path></svg>
+          <div class="material-card__content">
+            <span class="tag tag--green material-card__tag">METAL</span>
+            <h3 class="material-card__title" data-od-id="path-6-1-0-3-1-1">Metal</h3>
+            <p class="material-card__desc">Latas de aluminio, hojalata, tapas metálicas. Aplastar latas para optimizar espacio.</p>
+            <span class="material-card__points">+8 pts / 100g</span>
+          </div>
+        </div>
+        <div class="material-card">
+          <svg class="material-card__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z"></path><path d="m8 12 3 3 5-5"></path></svg>
+          <div class="material-card__content">
+            <span class="tag tag--teal material-card__tag">ORGÁNICO</span>
+            <h3 class="material-card__title" data-od-id="path-6-1-0-4-1-1">Orgánicos</h3>
+            <p class="material-card__desc">Restos de comida, cáscaras, residuos de jardín. Para composta y biogás comunitario.</p>
+            <span class="material-card__points">+2 pts / 100g</span>
+          </div>
+        </div>
+        <div class="material-card material-card--wide">
+          <svg class="material-card__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="12" rx="2"></rect><path d="M12 12h.01"></path><path d="M17 12h.01"></path><path d="M7 12h.01"></path></svg>
+          <div class="material-card__content">
+            <span class="tag tag--amber material-card__tag">ELECTRÓNICOS</span>
+            <h3 class="material-card__title" data-od-id="path-6-1-0-5-1-1">Electrónicos (RAEE)</h3>
+            <p class="material-card__desc">Celulares, baterías, cables, cargadores, tablets, laptops. Máximo valor por pieza — no por peso. Entrega en puntos verdes que aceptan electrónicos.</p>
+            <span class="material-card__points">+20 pts / pieza</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       8. CONSULTATIONS & MANAGEMENT
+       ============================================================ -->
+  <section class="consultations" id="consultas" data-od-id="path-7">
+    <div class="container" data-od-id="path-7-0">
+      <div class="section-header fade-up">
+        <span class="tag tag--green section-header__tag">CONSULTAS Y GESTIÓN</span>
+        <h2 class="section-header__title" data-od-id="path-7-0-0-1">Gestiona tu <em>reciclaje</em></h2>
+        <p class="section-header__desc">Registra entregas, consulta tu historial, revisa tus puntos y canjea recompensas.</p>
+      </div>
+
+      <div class="tabs fade-up" role="tablist">
+        <button class="tab active" role="tab" data-tab="registrar" onclick="switchTab('registrar')" data-od-id="path-7-0-1-0">Registrar entrega</button>
+        <button class="tab" role="tab" data-tab="consultar" onclick="switchTab('consultar')" data-od-id="path-7-0-1-1">Consultar puntos</button>
+        <button class="tab" role="tab" data-tab="historial" onclick="switchTab('historial')" data-od-id="path-7-0-1-2">Historial</button>
+        <button class="tab" role="tab" data-tab="canjear" onclick="switchTab('canjear')" data-od-id="path-7-0-1-3">Canjear recompensas</button>
+      </div>
+
+      <!-- Tab: Registrar -->
+      <div class="tab-panel active" id="panel-registrar" data-od-id="path-7-0-2">
+        <div class="form-group" data-od-id="path-7-0-2-0">
+          <label for="reg-email">Email de cuenta</label>
+          <input type="email" id="reg-email" placeholder="tu@email.com" data-od-id="path-7-0-2-0-1">
+        </div>
+        <div class="form-row" data-od-id="path-7-0-2-1">
+          <div class="form-group">
+            <label for="reg-material">Tipo de material</label>
+            <select id="reg-material" data-od-id="path-7-0-2-1-0-1">
+              <option value="">Seleccionar...</option>
+              <option value="plastico">Plástico — 5 pts/100g</option>
+              <option value="vidrio">Vidrio — 4 pts/100g</option>
+              <option value="papel">Papel/Cartón — 3 pts/100g</option>
+              <option value="metal">Metal — 8 pts/100g</option>
+              <option value="organico">Orgánico — 2 pts/100g</option>
+              <option value="electronico">Electrónico — 20 pts/pieza</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="reg-cantidad" id="reg-cantidad-label" data-od-id="path-7-0-2-1-1-0">Cantidad (gramos)</label>
+            <input type="number" id="reg-cantidad" placeholder="Ej: 500" min="0" data-od-id="path-7-0-2-1-1-1">
+          </div>
+        </div>
+        <div class="form-group" data-od-id="path-7-0-2-2">
+          <label for="reg-punto">Punto verde</label>
+          <select id="reg-punto" data-od-id="path-7-0-2-2-1">
+            <option value="">Seleccionar punto verde...</option>
+            <option value="coyoacan">PV Coyoacán — Av. Universidad 1234</option>
+            <option value="delvalle">PV Del Valle — Insurgentes Sur 567</option>
+            <option value="polanco">PV Polanco — Av. Homero 890</option>
+            <option value="xochimilco">PV Xochimilco — Calz. de las Flores 123</option>
+            <option value="tlalpan">PV Tlalpan — Av. Insurgentes Sur 2345</option>
+          </select>
+        </div>
+        <button class="btn btn--primary" onclick="calculatePoints()" data-od-id="path-7-0-2-3">Calcular puntos</button>
+        <div class="points-result" id="points-result" data-od-id="path-7-0-2-4"></div>
+      </div>
+
+      <!-- Tab: Consultar -->
+      <div class="tab-panel" id="panel-consultar" data-od-id="path-7-0-3">
+        <div class="form-group" data-od-id="path-7-0-3-0">
+          <label for="cons-email">Email de cuenta</label>
+          <input type="email" id="cons-email" placeholder="tu@email.com" data-od-id="path-7-0-3-0-1">
+        </div>
+        <button class="btn btn--primary" onclick="consultPoints()" data-od-id="path-7-0-3-1">Consultar</button>
+        <div class="points-result" id="consult-result" data-od-id="path-7-0-3-2"></div>
+      </div>
+
+      <!-- Tab: Historial -->
+      <div class="tab-panel" id="panel-historial" data-od-id="path-7-0-4">
+        <div class="form-group" data-od-id="path-7-0-4-0">
+          <label for="hist-email">Email de cuenta</label>
+          <input type="email" id="hist-email" placeholder="tu@email.com" data-od-id="path-7-0-4-0-1">
+        </div>
+        <button class="btn btn--primary" onclick="showHistory()" data-od-id="path-7-0-4-1">Ver historial</button>
+        <div id="history-content" style="margin-top:var(--space-lg);overflow-x:auto;" data-od-id="path-7-0-4-2"></div>
+      </div>
+
+      <!-- Tab: Canjear -->
+      <div class="tab-panel" id="panel-canjear" data-od-id="path-7-0-5">
+        <p style="font-size:0.9rem;color:var(--muted);margin-bottom:var(--space-lg);">Tu saldo actual: <strong style="color:var(--green-600);font-family:var(--font-display);font-size:1.2rem;" id="user-balance" data-od-id="path-7-0-5-0-0">320</strong> ecopuntos</p>
+        <div class="redeem-grid" data-od-id="path-7-0-5-1">
+          <div class="reward-card">
+            <span class="tag tag--green">ALIMENTOS</span>
+            <div class="reward-card__cost">50 pts</div>
+            <div class="reward-card__name">Café gratis</div>
+            <div class="reward-card__cat">Cafetería local</div>
+            <button class="btn btn--primary" style="margin-top:var(--space-sm);font-size:0.6rem;padding:0.5em 1em;" onclick="redeemReward('Café gratis', 50)" data-od-id="path-7-0-5-1-0-4">Canjear</button>
+          </div>
+          <div class="reward-card">
+            <span class="tag tag--teal">TRANSPORTE</span>
+            <div class="reward-card__cost">80 pts</div>
+            <div class="reward-card__name">Descuento Metrobús</div>
+            <div class="reward-card__cat">Transporte público</div>
+            <button class="btn btn--teal" style="margin-top:var(--space-sm);font-size:0.6rem;padding:0.5em 1em;" onclick="redeemReward('Descuento Metrobús', 80)" data-od-id="path-7-0-5-1-1-4">Canjear</button>
+          </div>
+          <div class="reward-card">
+            <span class="tag tag--amber">AMBIENTAL</span>
+            <div class="reward-card__cost">120 pts</div>
+            <div class="reward-card__name">Kit de compostaje</div>
+            <div class="reward-card__cat">Productos sustentables</div>
+            <button class="btn btn--dark" style="margin-top:var(--space-sm);font-size:0.6rem;padding:0.5em 1em;" onclick="redeemReward('Kit de compostaje', 120)" data-od-id="path-7-0-5-1-2-4">Canjear</button>
+          </div>
+          <div class="reward-card">
+            <span class="tag tag--green">ALIMENTOS</span>
+            <div class="reward-card__cost">35 pts</div>
+            <div class="reward-card__name">Smoothie verde</div>
+            <div class="reward-card__cat">Juguería orgánica</div>
+            <button class="btn btn--primary" style="margin-top:var(--space-sm);font-size:0.6rem;padding:0.5em 1em;" onclick="redeemReward('Smoothie verde', 35)" data-od-id="path-7-0-5-1-3-4">Canjear</button>
+          </div>
+          <div class="reward-card">
+            <span class="tag tag--teal">DESCUENTO</span>
+            <div class="reward-card__cost">200 pts</div>
+            <div class="reward-card__name">20% en tienda eco</div>
+            <div class="reward-card__cat">Tienda sustentable</div>
+            <button class="btn btn--teal" style="margin-top:var(--space-sm);font-size:0.6rem;padding:0.5em 1em;" onclick="redeemReward('20% en tienda eco', 200)" data-od-id="path-7-0-5-1-4-4">Canjear</button>
+          </div>
+          <div class="reward-card">
+            <span class="tag tag--amber">AMBIENTAL</span>
+            <div class="reward-card__cost">150 pts</div>
+            <div class="reward-card__name">Árbol plantado</div>
+            <div class="reward-card__cat">Reforestación CDMX</div>
+            <button class="btn btn--dark" style="margin-top:var(--space-sm);font-size:0.6rem;padding:0.5em 1em;" onclick="redeemReward('Árbol plantado', 150)" data-od-id="path-7-0-5-1-5-4">Canjear</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       9. GREEN POINTS
+       ============================================================ -->
+  <section class="green-points" id="puntos-verdes" data-od-id="path-8">
+    <div class="container" data-od-id="path-8-0">
+      <div class="section-header fade-up">
+        <span class="tag tag--green section-header__tag">PUNTOS VERDES</span>
+        <h2 class="section-header__title" data-od-id="path-8-0-0-1">Centros de <em>acopio</em></h2>
+        <p class="section-header__desc">Encuentra tu punto verde más cercano. Cada delegación tiene al menos un centro activo.</p>
+      </div>
+      <div class="gp-layout fade-up">
+        <div class="gp-map">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+          <span class="gp-map__label">Mapa interactivo</span>
+          <span style="font-size:0.8rem;">Próximamente — integración con mapas de CDMX</span>
+        </div>
+        <div class="gp-list">
+          <div class="gp-item">
+            <div class="gp-item__name">PV Coyoacán</div>
+            <div class="gp-item__addr">Av. Universidad 1234, Del. Coyoacán</div>
+            <div class="gp-item__meta">
+              <span class="tag tag--green">Lun–Sáb 8–18h</span>
+              <span class="tag tag--teal">Electrónicos</span>
+            </div>
+          </div>
+          <div class="gp-item">
+            <div class="gp-item__name">PV Del Valle</div>
+            <div class="gp-item__addr">Insurgentes Sur 567, Del. Benito Juárez</div>
+            <div class="gp-item__meta">
+              <span class="tag tag--green">Lun–Sáb 7–19h</span>
+              <span class="tag tag--teal">Electrónicos</span>
+            </div>
+          </div>
+          <div class="gp-item">
+            <div class="gp-item__name">PV Polanco</div>
+            <div class="gp-item__addr">Av. Homero 890, Del. Miguel Hidalgo</div>
+            <div class="gp-item__meta">
+              <span class="tag tag--green">Lun–Vie 9–17h</span>
+            </div>
+          </div>
+          <div class="gp-item">
+            <div class="gp-item__name">PV Xochimilco</div>
+            <div class="gp-item__addr">Calz. de las Flores 123, Del. Xochimilco</div>
+            <div class="gp-item__meta">
+              <span class="tag tag--green">Lun–Sáb 8–16h</span>
+              <span class="tag tag--teal">Electrónicos</span>
+            </div>
+          </div>
+          <div class="gp-item">
+            <div class="gp-item__name">PV Tlalpan</div>
+            <div class="gp-item__addr">Av. Insurgentes Sur 2345, Del. Tlalpan</div>
+            <div class="gp-item__meta">
+              <span class="tag tag--green">Lun–Sáb 8–18h</span>
+            </div>
+          </div>
+          <div class="gp-item">
+            <div class="gp-item__name">PV Iztapalapa</div>
+            <div class="gp-item__addr">Av. Tláhuac 456, Del. Iztapalapa</div>
+            <div class="gp-item__meta">
+              <span class="tag tag--amber">Mantenimiento</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       10. NEWS & PROMOTIONS
+       ============================================================ -->
+  <section class="news" id="novedades" data-od-id="path-9">
+    <div class="container" data-od-id="path-9-0">
+      <div class="section-header fade-up">
+        <span class="tag tag--green section-header__tag">NOVEDADES Y PROMOCIONES</span>
+        <h2 class="section-header__title" data-od-id="path-9-0-0-1">Lo último en <em>EcoRecicla</em></h2>
+      </div>
+
+      <div class="news__layout fade-up">
+        <div class="news__featured">
+          <span class="tag news__featured-tag">DESTACADO</span>
+          <h3 class="news__featured-title" data-od-id="path-9-0-1-0-1">CDMX recicla 8.4 toneladas en el primer trimestre de 2026</h3>
+          <p class="news__featured-desc">La plataforma EcoRecicla alcanzó un récord histórico con más de 1,200 usuarios activos y 23 puntos verdes operando en toda la ciudad.</p>
+        </div>
+        <div class="news__sidebar">
+          <div class="news__side-item">
+            <span class="tag tag--teal">EVENTO</span>
+            <h4 class="news__side-title" data-od-id="path-9-0-1-1-0-1">Jornada de reciclaje en Xochimilco — 15 de junio</h4>
+          </div>
+          <div class="news__side-item">
+            <span class="tag tag--amber">PROMO</span>
+            <h4 class="news__side-title" data-od-id="path-9-0-1-1-1-1">Doble puntos en electrónicos durante todo mayo</h4>
+          </div>
+          <div class="news__side-item">
+            <span class="tag tag--green">NUEVO</span>
+            <h4 class="news__side-title" data-od-id="path-9-0-1-1-2-1">Nuevo punto verde abre en Iztapalapa</h4>
+          </div>
+        </div>
+      </div>
+
+      <div class="promos fade-up">
+        <div class="promo-card promo-card--green">
+          <div>
+            <h4 class="promo-card__title" data-od-id="path-9-0-2-0-0-0">Café gratis por 50 puntos</h4>
+            <p class="promo-card__desc">Canjea en cafeterías participantes de Coyoacán y Del Valle.</p>
+          </div>
+        </div>
+        <div class="promo-card promo-card--teal">
+          <div>
+            <h4 class="promo-card__title" data-od-id="path-9-0-2-1-0-0">Descuento en Metrobús</h4>
+            <p class="promo-card__desc">80 puntos = viaje gratis. Válido en todas las líneas.</p>
+          </div>
+        </div>
+        <div class="promo-card promo-card--amber">
+          <div>
+            <h4 class="promo-card__title" data-od-id="path-9-0-2-2-0-0">Planta un árbol</h4>
+            <p class="promo-card__desc">150 puntos y tu nombre en el programa de reforestación.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       11. ADMIN PANEL
+       ============================================================ -->
+  <section class="admin" id="admin" data-od-id="path-10">
+    <div class="container" data-od-id="path-10-0">
+      <div class="section-header fade-up">
+        <span class="tag tag--green section-header__tag">ADMINISTRACIÓN</span>
+        <h2 class="section-header__title" data-od-id="path-10-0-0-1">Panel de <em>control</em></h2>
+      </div>
+
+      <!-- Login -->
+      <div class="admin__login fade-up" id="admin-login" data-od-id="path-10-0-1">
+        <h3 class="admin__login-title" data-od-id="path-10-0-1-0">Acceso protegido</h3>
+        <p class="admin__login-desc">Ingresa tus credenciales de administrador para acceder al panel de gestión.</p>
+        <div class="form-group" data-od-id="path-10-0-1-2">
+          <label for="admin-user">Usuario</label>
+          <input type="text" id="admin-user" placeholder="admin" data-od-id="path-10-0-1-2-1">
+        </div>
+        <div class="form-group" data-od-id="path-10-0-1-3">
+          <label for="admin-pass">Contraseña</label>
+          <input type="password" id="admin-pass" placeholder="••••••••" data-od-id="path-10-0-1-3-1">
+        </div>
+        <button class="btn btn--primary" onclick="adminLogin()" data-od-id="path-10-0-1-4">Iniciar sesión</button>
+      </div>
+
+      <!-- Dashboard -->
+      <div class="admin__dashboard" id="admin-dashboard" data-od-id="path-10-0-2">
+        <div class="admin__metrics" data-od-id="path-10-0-2-0">
+          <div class="metric-card">
+            <div class="metric-card__num" id="metric-users" data-od-id="path-10-0-2-0-0-0">1,240</div>
+            <div class="metric-card__label">Usuarios</div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-card__num" id="metric-points" data-od-id="path-10-0-2-0-1-0">23</div>
+            <div class="metric-card__label">Puntos verdes</div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-card__num" id="metric-deliveries" data-od-id="path-10-0-2-0-2-0">3,847</div>
+            <div class="metric-card__label">Entregas</div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-card__num" id="metric-tons" data-od-id="path-10-0-2-0-3-0">8.4 T</div>
+            <div class="metric-card__label">Recicladas</div>
+          </div>
+        </div>
+
+        <div class="admin__tabs" data-od-id="path-10-0-2-1">
+          <button class="admin__tab active" onclick="switchAdminTab('users')" data-od-id="path-10-0-2-1-0">Usuarios</button>
+          <button class="admin__tab" onclick="switchAdminTab('green-points')" data-od-id="path-10-0-2-1-1">Puntos Verdes</button>
+          <button class="admin__tab" onclick="switchAdminTab('deliveries')" data-od-id="path-10-0-2-1-2">Entregas</button>
+        </div>
+
+        <!-- Users Panel -->
+        <div class="admin__panel active" id="admin-panel-users" data-od-id="path-10-0-2-2">
+          <div class="admin__add-form" data-od-id="path-10-0-2-2-0">
+            <input type="text" id="new-user-name" placeholder="Nombre" data-od-id="path-10-0-2-2-0-0">
+            <input type="text" id="new-user-lastname" placeholder="Apellido" data-od-id="path-10-0-2-2-0-1">
+            <input type="email" id="new-user-email" placeholder="Email" data-od-id="path-10-0-2-2-0-2">
+            <select id="new-user-delegacion" data-od-id="path-10-0-2-2-0-3">
+              <option value="">Delegación</option>
+              <option value="Coyoacán">Coyoacán</option>
+              <option value="Del Valle">Del Valle</option>
+              <option value="Polanco">Polanco</option>
+              <option value="Xochimilco">Xochimilco</option>
+              <option value="Tlalpan">Tlalpan</option>
+              <option value="Iztapalapa">Iztapalapa</option>
+            </select>
+            <button class="btn btn--primary" style="font-size:0.6rem;padding:0.5em 1em;" onclick="addUser()" data-od-id="path-10-0-2-2-0-4">Agregar</button>
+          </div>
+          <div style="overflow-x:auto;">
+            <table class="admin__table" id="admin-users-table" data-od-id="path-10-0-2-2-1-0">
+              <thead>
+                <tr>
+                  <th>Nombre</th>
+                  <th>Email</th>
+                  <th>Delegación</th>
+                  <th>Ecopuntos</th>
+                  <th>KG</th>
+                  <th>Acciones</th>
+                </tr>
+              </thead>
+              <tbody id="admin-users-body" data-od-id="path-10-0-2-2-1-0-1"></tbody>
+            </table>
+          </div>
+          <button class="btn btn--outline" style="border-color:var(--border);color:var(--muted);margin-top:var(--space-md);font-size:0.6rem;padding:0.5em 1em;" onclick="exportCSV('users')" data-od-id="path-10-0-2-2-2">Exportar CSV</button>
+        </div>
+
+        <!-- Green Points Panel -->
+        <div class="admin__panel" id="admin-panel-green-points" data-od-id="path-10-0-2-3">
+          <div class="admin__add-form" data-od-id="path-10-0-2-3-0">
+            <input type="text" id="new-gp-name" placeholder="Nombre" data-od-id="path-10-0-2-3-0-0">
+            <input type="text" id="new-gp-addr" placeholder="Dirección" data-od-id="path-10-0-2-3-0-1">
+            <select id="new-gp-delegacion" data-od-id="path-10-0-2-3-0-2">
+              <option value="">Delegación</option>
+              <option value="Coyoacán">Coyoacán</option>
+              <option value="Del Valle">Del Valle</option>
+              <option value="Polanco">Polanco</option>
+              <option value="Xochimilco">Xochimilco</option>
+              <option value="Tlalpan">Tlalpan</option>
+            </select>
+            <input type="text" id="new-gp-hours" placeholder="Horario" data-od-id="path-10-0-2-3-0-3">
+            <button class="btn btn--primary" style="font-size:0.6rem;padding:0.5em 1em;" onclick="addGreenPoint()" data-od-id="path-10-0-2-3-0-4">Agregar</button>
+          </div>
+          <div style="overflow-x:auto;">
+            <table class="admin__table" id="admin-gp-table" data-od-id="path-10-0-2-3-1-0">
+              <thead>
+                <tr>
+                  <th>Nombre</th>
+                  <th>Dirección</th>
+                  <th>Delegación</th>
+                  <th>Horario</th>
+                  <th>Estado</th>
+                  <th>Acciones</th>
+                </tr>
+              </thead>
+              <tbody id="admin-gp-body" data-od-id="path-10-0-2-3-1-0-1"></tbody>
+            </table>
+          </div>
+          <button class="btn btn--outline" style="border-color:var(--border);color:var(--muted);margin-top:var(--space-md);font-size:0.6rem;padding:0.5em 1em;" onclick="exportCSV('green-points')" data-od-id="path-10-0-2-3-2">Exportar CSV</button>
+        </div>
+
+        <!-- Deliveries Panel -->
+        <div class="admin__panel" id="admin-panel-deliveries" data-od-id="path-10-0-2-4">
+          <div style="overflow-x:auto;">
+            <table class="admin__table" id="admin-deliveries-table" data-od-id="path-10-0-2-4-0-0">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Usuario</th>
+                  <th>Material</th>
+                  <th>Cantidad</th>
+                  <th>Puntos</th>
+                  <th>Fecha</th>
+                  <th>Estado</th>
+                  <th>Acciones</th>
+                </tr>
+              </thead>
+              <tbody id="admin-deliveries-body" data-od-id="path-10-0-2-4-0-0-1"></tbody>
+            </table>
+          </div>
+          <button class="btn btn--outline" style="border-color:var(--border);color:var(--muted);margin-top:var(--space-md);font-size:0.6rem;padding:0.5em 1em;" onclick="exportCSV('deliveries')" data-od-id="path-10-0-2-4-1">Exportar CSV</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       12. FOOTER
+       ============================================================ -->
+  <footer class="footer" id="footer" data-od-id="path-11">
+    <div class="container" data-od-id="path-11-0">
+      <div class="footer__grid">
+        <div>
+          <div class="footer__brand-name">EcoRecicla</div>
+          <p class="footer__brand-desc">Plataforma ciudadana de reciclaje con sistema de recompensas. Construyendo una CDMX más limpia, un ecopunto a la vez.</p>
+        </div>
+        <div class="footer__col">
+          <div class="footer__col-title">Plataforma</div>
+          <a href="#servicios" data-od-id="path-11-0-0-1-1">Servicios</a>
+          <a href="#materiales" data-od-id="path-11-0-0-1-2">Materiales</a>
+          <a href="#como-funciona" data-od-id="path-11-0-0-1-3">Cómo funciona</a>
+          <a href="#consultas" data-od-id="path-11-0-0-1-4">Consultas</a>
+        </div>
+        <div class="footer__col">
+          <div class="footer__col-title">Comunidad</div>
+          <a href="#puntos-verdes" data-od-id="path-11-0-0-2-1">Puntos verdes</a>
+          <a href="#novedades" data-od-id="path-11-0-0-2-2">Novedades</a>
+          <a href="#" data-od-id="path-11-0-0-2-3">Eventos</a>
+          <a href="#" data-od-id="path-11-0-0-2-4">Blog</a>
+        </div>
+        <div class="footer__col">
+          <div class="footer__col-title">Legal</div>
+          <a href="#" data-od-id="path-11-0-0-3-1">Privacidad</a>
+          <a href="#" data-od-id="path-11-0-0-3-2">Términos</a>
+          <a href="#" data-od-id="path-11-0-0-3-3">Contacto</a>
+          <a href="#admin" data-od-id="path-11-0-0-3-4">Admin</a>
+        </div>
+      </div>
+      <div class="footer__bottom">
+        <span>© 2026 EcoRecicla — Hackathon CDMX</span>
+        <span>Hecho con propósito en México</span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ============================================================
+       SEARCH OVERLAY
+       ============================================================ -->
+  <div class="search-overlay" id="search-overlay" onclick="closeSearchOutside(event)" data-od-id="path-12">
+    <div class="search-box" data-od-id="path-12-0">
+      <div class="search-box__input">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.3-4.3"></path></svg>
+        <input type="text" id="search-input" placeholder="Buscar en EcoRecicla..." oninput="performSearch(this.value)" data-od-id="path-12-0-0-1">
+      </div>
+      <div class="search-box__results" id="search-results" data-od-id="path-12-0-1">
+        <div class="search-box__empty" data-od-id="path-12-0-1-0">Escribe para buscar en el sitio</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================================
+       TOAST CONTAINER
+       ============================================================ -->
+  <div class="toast-container" id="toast-container" data-od-id="path-13"></div>
+
+  <!-- ============================================================
+       JAVASCRIPT
+       ============================================================ -->
+  <script>
+    /* ---- Data Models ---- */
+    const POINTS_PER = {
+      plastico: 5, vidrio: 4, papel: 3, metal: 8, organico: 2, electronico: 20
+    };
+
+    let users = [
+      { id: 1, nombre: 'María', apellido: 'García', email: 'maria@email.com', delegacion: 'Coyoacán', ecopuntos: 320, kg_reciclados: 12.5, co2_evitado: 8.2, rol: 'usuario', activo: true },
+      { id: 2, nombre: 'Carlos', apellido: 'López', email: 'carlos@email.com', delegacion: 'Del Valle', ecopuntos: 180, kg_reciclados: 7.3, co2_evitado: 4.8, rol: 'usuario', activo: true },
+      { id: 3, nombre: 'Ana', apellido: 'Martínez', email: 'ana@email.com', delegacion: 'Polanco', ecopuntos: 450, kg_reciclados: 18.1, co2_evitado: 12.0, rol: 'usuario', activo: true },
+      { id: 4, nombre: 'Roberto', apellido: 'Hernández', email: 'roberto@email.com', delegacion: 'Xochimilco', ecopuntos: 95, kg_reciclados: 3.2, co2_evitado: 2.1, rol: 'usuario', activo: true },
+      { id: 5, nombre: 'Admin', apellido: 'Sistema', email: 'admin@ecorecicla.mx', delegacion: 'CDMX', ecopuntos: 0, kg_reciclados: 0, co2_evitado: 0, rol: 'administrador', activo: true }
+    ];
+
+    let greenPoints = [
+      { id: 1, nombre: 'PV Coyoacán', direccion: 'Av. Universidad 1234', delegacion: 'Coyoacán', horario: 'Lun–Sáb 8–18h', materiales: ['plastico','vidrio','papel','metal','electronico'], acepta_electronicos: true, estado: 'activo' },
+      { id: 2, nombre: 'PV Del Valle', direccion: 'Insurgentes Sur 567', delegacion: 'Del Valle', horario: 'Lun–Sáb 7–19h', materiales: ['plastico','vidrio','papel','metal','organico','electronico'], acepta_electronicos: true, estado: 'activo' },
+      { id: 3, nombre: 'PV Polanco', direccion: 'Av. Homero 890', delegacion: 'Polanco', horario: 'Lun–Vie 9–17h', materiales: ['plastico','vidrio','papel','metal'], acepta_electronicos: false, estado: 'activo' },
+      { id: 4, nombre: 'PV Xochimilco', direccion: 'Calz. de las Flores 123', delegacion: 'Xochimilco', horario: 'Lun–Sáb 8–16h', materiales: ['plastico','papel','organico','electronico'], acepta_electronicos: true, estado: 'activo' },
+      { id: 5, nombre: 'PV Tlalpan', direccion: 'Av. Insurgentes Sur 2345', delegacion: 'Tlalpan', horario: 'Lun–Sáb 8–18h', materiales: ['plastico','vidrio','papel','metal','organico'], acepta_electronicos: false, estado: 'activo' },
+      { id: 6, nombre: 'PV Iztapalapa', direccion: 'Av. Tláhuac 456', delegacion: 'Iztapalapa', horario: '—', materiales: [], acepta_electronicos: false, estado: 'mantenimiento' }
+    ];
+
+    let deliveries = [
+      { id: 1, usuario_id: 1, punto_verde_id: 1, material_tipo: 'plastico', cantidad: 500, puntos_otorgados: 25, fecha: '2026-05-10', estado: 'acreditado', operador_id: 5 },
+      { id: 2, usuario_id: 1, punto_verde_id: 1, material_tipo: 'vidrio', cantidad: 300, puntos_otorgados: 12, fecha: '2026-05-12', estado: 'acreditado', operador_id: 5 },
+      { id: 3, usuario_id: 2, punto_verde_id: 2, material_tipo: 'metal', cantidad: 200, puntos_otorgados: 16, fecha: '2026-05-13', estado: 'pendiente', operador_id: 5 },
+      { id: 4, usuario_id: 3, punto_verde_id: 3, material_tipo: 'electronico', cantidad: 2, puntos_otorgados: 40, fecha: '2026-05-14', estado: 'acreditado', operador_id: 5 },
+      { id: 5, usuario_id: 4, punto_verde_id: 4, material_tipo: 'organico', cantidad: 1000, puntos_otorgados: 20, fecha: '2026-05-15', estado: 'rechazado', operador_id: 5 }
+    ];
+
+    let userBalance = 320;
+    let nextUserId = 6;
+    let nextGpId = 7;
+
+    /* ---- Search Index ---- */
+    const searchIndex = [
+      { text: 'Registrar entrega de reciclaje', section: '#consultas' },
+      { text: 'Consultar ecopuntos y saldo', section: '#consultas' },
+      { text: 'Historial de entregas', section: '#consultas' },
+      { text: 'Canjear recompensas — Café gratis', section: '#consultas' },
+      { text: 'Canjear descuento Metrobús', section: '#consultas' },
+      { text: 'Canjear kit de compostaje', section: '#consultas' },
+      { text: 'Punto verde Coyoacán — Av. Universidad', section: '#puntos-verdes' },
+      { text: 'Punto verde Del Valle — Insurgentes Sur', section: '#puntos-verdes' },
+      { text: 'Punto verde Polanco — Av. Homero', section: '#puntos-verdes' },
+      { text: 'Punto verde Xochimilco — Calz. de las Flores', section: '#puntos-verdes' },
+      { text: 'Plástico PET — 5 puntos por 100g', section: '#materiales' },
+      { text: 'Vidrio — 4 puntos por 100g', section: '#materiales' },
+      { text: 'Papel y cartón — 3 puntos por 100g', section: '#materiales' },
+      { text: 'Metal — 8 puntos por 100g', section: '#materiales' },
+      { text: 'Orgánicos — 2 puntos por 100g', section: '#materiales' },
+      { text: 'Electrónicos RAEE — 20 puntos por pieza', section: '#materiales' },
+      { text: 'Panel de administración', section: '#admin' },
+      { text: 'Cómo funciona el sistema de ecopuntos', section: '#como-funciona' },
+      { text: 'Promoción doble puntos en electrónicos', section: '#novedades' },
+      { text: 'Evento de reciclaje Xochimilco junio', section: '#novedades' }
+    ];
+
+    /* ---- Tabs ---- */
+    function switchTab(tabId) {
+      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+      document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+      document.querySelector(`[data-tab="${tabId}"]`).classList.add('active');
+      document.getElementById(`panel-${tabId}`).classList.add('active');
+    }
+
+    function switchAdminTab(tabId) {
+      document.querySelectorAll('.admin__tab').forEach(t => t.classList.remove('active'));
+      document.querySelectorAll('.admin__panel').forEach(p => p.classList.remove('active'));
+      event.target.classList.add('active');
+      document.getElementById(`admin-panel-${tabId}`).classList.add('active');
+    }
+
+    /* ---- Point Calculator ---- */
+    document.getElementById('reg-material').addEventListener('change', function() {
+      const label = document.getElementById('reg-cantidad-label');
+      label.textContent = this.value === 'electronico' ? 'Cantidad (piezas)' : 'Cantidad (gramos)';
+    });
+
+    function calculatePoints() {
+      const material = document.getElementById('reg-material').value;
+      const cantidad = parseFloat(document.getElementById('reg-cantidad').value);
+      const result = document.getElementById('points-result');
+
+      if (!material || !cantidad || cantidad <= 0) {
+        showToast('Selecciona un material y cantidad válida', 'error');
+        return;
+      }
+
+      const pts = material === 'electronico'
+        ? cantidad * POINTS_PER[material]
+        : Math.floor(cantidad / 100) * POINTS_PER[material];
+
+      result.textContent = `+${pts} ecopuntos estimados`;
+      result.classList.add('show');
+      showToast(`Puntos calculados: ${pts} ecopuntos`, 'success');
+    }
+
+    /* ---- Consult Points ---- */
+    function consultPoints() {
+      const email = document.getElementById('cons-email').value;
+      const result = document.getElementById('consult-result');
+
+      if (!email) {
+        showToast('Ingresa un email', 'error');
+        return;
+      }
+
+      const user = users.find(u => u.email.toLowerCase() === email.toLowerCase());
+      if (user) {
+        result.innerHTML = `<strong>${user.nombre} ${user.apellido}</strong><br>Ecopuntos: <strong>${user.ecopuntos}</strong><br>KG reciclados: ${user.kg_reciclados}<br>CO₂ evitado: ${user.co2_evitado} kg`;
+        result.classList.add('show');
+        showToast(`Puntos encontrados: ${user.ecopuntos}`, 'success');
+      } else {
+        result.innerHTML = 'No se encontró una cuenta con ese email.';
+        result.classList.add('show');
+        showToast('Cuenta no encontrada', 'error');
+      }
+    }
+
+    /* ---- History ---- */
+    function showHistory() {
+      const email = document.getElementById('hist-email').value;
+      const container = document.getElementById('history-content');
+
+      if (!email) {
+        showToast('Ingresa un email', 'error');
+        return;
+      }
+
+      const user = users.find(u => u.email.toLowerCase() === email.toLowerCase());
+      if (!user) {
+        container.innerHTML = '<p style="color:var(--muted);">No se encontró una cuenta con ese email.</p>';
+        return;
+      }
+
+      const userDeliveries = deliveries.filter(d => d.usuario_id === user.id);
+      if (userDeliveries.length === 0) {
+        container.innerHTML = '<p style="color:var(--muted);">Sin entregas registradas.</p>';
+        return;
+      }
+
+      let html = `<table class="history-table"><thead><tr><th>Fecha</th><th>Material</th><th>Cantidad</th><th>Puntos</th><th>Estado</th></tr></thead><tbody>`;
+      userDeliveries.forEach(d => {
+        const materialLabels = { plastico: 'Plástico', vidrio: 'Vidrio', papel: 'Papel', metal: 'Metal', organico: 'Orgánico', electronico: 'Electrónico' };
+        html += `<tr>
+          <td>${d.fecha}</td>
+          <td>${materialLabels[d.material_tipo]}</td>
+          <td>${d.material_tipo === 'electronico' ? d.cantidad + ' pzas' : d.cantidad + 'g'}</td>
+          <td>${d.puntos_otorgados}</td>
+          <td><span class="status-badge status-badge--${d.estado}">${d.estado}</span></td>
+        </tr>`;
+      });
+      html += '</tbody></table>';
+      container.innerHTML = html;
+      showToast(`${userDeliveries.length} entregas encontradas`, 'success');
+    }
+
+    /* ---- Redeem ---- */
+    function redeemReward(name, cost) {
+      if (userBalance >= cost) {
+        userBalance -= cost;
+        document.getElementById('user-balance').textContent = userBalance;
+        const code = 'ECO-' + Math.random().toString(36).substring(2, 8).toUpperCase();
+        showToast(`¡Canjeado! ${name} — Código: ${code}`, 'success');
+      } else {
+        showToast(`Puntos insuficientes. Necesitas ${cost - userBalance} más.`, 'error');
+      }
+    }
+
+    /* ---- Admin Login ---- */
+    function adminLogin() {
+      const user = document.getElementById('admin-user').value;
+      const pass = document.getElementById('admin-pass').value;
+
+      if (user === 'admin' && pass === 'eco2024') {
+        document.getElementById('admin-login').style.display = 'none';
+        document.getElementById('admin-dashboard').classList.add('show');
+        renderAdminUsers();
+        renderAdminGreenPoints();
+        renderAdminDeliveries();
+        showToast('Bienvenido, administrador', 'success');
+      } else {
+        showToast('Credenciales incorrectas', 'error');
+      }
+    }
+
+    /* ---- Admin CRUD ---- */
+    function renderAdminUsers() {
+      const body = document.getElementById('admin-users-body');
+      body.innerHTML = users.map(u => `
+        <tr>
+          <td>${u.nombre} ${u.apellido}</td>
+          <td>${u.email}</td>
+          <td>${u.delegacion}</td>
+          <td>${u.ecopuntos}</td>
+          <td>${u.kg_reciclados}</td>
+          <td class="admin__actions">
+            <button class="edit-btn" onclick="editUser(${u.id})">Editar</button>
+            <button class="del-btn" onclick="deleteUser(${u.id})">Eliminar</button>
+          </td>
+        </tr>
+      `).join('');
+      document.getElementById('metric-users').textContent = users.length.toLocaleString();
+    }
+
+    function addUser() {
+      const nombre = document.getElementById('new-user-name').value;
+      const apellido = document.getElementById('new-user-lastname').value;
+      const email = document.getElementById('new-user-email').value;
+      const delegacion = document.getElementById('new-user-delegacion').value;
+
+      if (!nombre || !apellido || !email || !delegacion) {
+        showToast('Completa todos los campos', 'error');
+        return;
+      }
+
+      users.push({ id: nextUserId++, nombre, apellido, email, delegacion, ecopuntos: 0, kg_reciclados: 0, co2_evitado: 0, rol: 'usuario', activo: true });
+      renderAdminUsers();
+      showToast(`Usuario ${nombre} ${apellido} agregado`, 'success');
+      document.getElementById('new-user-name').value = '';
+      document.getElementById('new-user-lastname').value = '';
+      document.getElementById('new-user-email').value = '';
+      document.getElementById('new-user-delegacion').value = '';
+    }
+
+    function editUser(id) {
+      const user = users.find(u => u.id === id);
+      if (!user) return;
+      const newPoints = prompt(`Nuevos ecopuntos para ${user.nombre} ${user.apellido}:`, user.ecopuntos);
+      if (newPoints !== null && !isNaN(newPoints)) {
+        user.ecopuntos = parseInt(newPoints);
+        renderAdminUsers();
+        showToast(`Puntos de ${user.nombre} actualizados a ${user.ecopuntos}`, 'success');
+      }
+    }
+
+    function deleteUser(id) {
+      const user = users.find(u => u.id === id);
+      if (!user) return;
+      if (confirm(`¿Eliminar a ${user.nombre} ${user.apellido}?`)) {
+        users = users.filter(u => u.id !== id);
+        renderAdminUsers();
+        showToast(`Usuario ${user.nombre} eliminado`, 'info');
+      }
+    }
+
+    function renderAdminGreenPoints() {
+      const body = document.getElementById('admin-gp-body');
+      body.innerHTML = greenPoints.map(gp => `
+        <tr>
+          <td>${gp.nombre}</td>
+          <td>${gp.direccion}</td>
+          <td>${gp.delegacion}</td>
+          <td>${gp.horario}</td>
+          <td><span class="status-badge status-badge--${gp.estado === 'activo' ? 'acreditado' : gp.estado === 'mantenimiento' ? 'pendiente' : 'rechazado'}">${gp.estado}</span></td>
+          <td class="admin__actions">
+            <button class="edit-btn" onclick="editGreenPoint(${gp.id})">Editar</button>
+            <button class="del-btn" onclick="deleteGreenPoint(${gp.id})">Eliminar</button>
+          </td>
+        </tr>
+      `).join('');
+      document.getElementById('metric-points').textContent = greenPoints.filter(gp => gp.estado === 'activo').length;
+    }
+
+    function addGreenPoint() {
+      const nombre = document.getElementById('new-gp-name').value;
+      const direccion = document.getElementById('new-gp-addr').value;
+      const delegacion = document.getElementById('new-gp-delegacion').value;
+      const horario = document.getElementById('new-gp-hours').value;
+
+      if (!nombre || !direccion || !delegacion || !horario) {
+        showToast('Completa todos los campos', 'error');
+        return;
+      }
+
+      greenPoints.push({ id: nextGpId++, nombre, direccion, delegacion, horario, materiales: ['plastico','papel'], acepta_electronicos: false, estado: 'activo' });
+      renderAdminGreenPoints();
+      showToast(`Punto verde ${nombre} agregado`, 'success');
+      document.getElementById('new-gp-name').value = '';
+      document.getElementById('new-gp-addr').value = '';
+      document.getElementById('new-gp-delegacion').value = '';
+      document.getElementById('new-gp-hours').value = '';
+    }
+
+    function editGreenPoint(id) {
+      const gp = greenPoints.find(g => g.id === id);
+      if (!gp) return;
+      const newEstado = prompt(`Nuevo estado para ${gp.nombre} (activo/mantenimiento/cerrado):`, gp.estado);
+      if (newEstado && ['activo', 'mantenimiento', 'cerrado'].includes(newEstado)) {
+        gp.estado = newEstado;
+        renderAdminGreenPoints();
+        showToast(`Estado de ${gp.nombre} actualizado`, 'success');
+      }
+    }
+
+    function deleteGreenPoint(id) {
+      const gp = greenPoints.find(g => g.id === id);
+      if (!gp) return;
+      if (confirm(`¿Eliminar ${gp.nombre}?`)) {
+        greenPoints = greenPoints.filter(g => g.id !== id);
+        renderAdminGreenPoints();
+        showToast(`Punto verde ${gp.nombre} eliminado`, 'info');
+      }
+    }
+
+    function renderAdminDeliveries() {
+      const body = document.getElementById('admin-deliveries-body');
+      const materialLabels = { plastico: 'Plástico', vidrio: 'Vidrio', papel: 'Papel', metal: 'Metal', organico: 'Orgánico', electronico: 'Electrónico' };
+      body.innerHTML = deliveries.map(d => {
+        const user = users.find(u => u.id === d.usuario_id);
+        return `<tr>
+          <td>${d.id}</td>
+          <td>${user ? user.nombre + ' ' + user.apellido : '—'}</td>
+          <td>${materialLabels[d.material_tipo]}</td>
+          <td>${d.material_tipo === 'electronico' ? d.cantidad + ' pzas' : d.cantidad + 'g'}</td>
+          <td>${d.puntos_otorgados}</td>
+          <td>${d.fecha}</td>
+          <td><span class="status-badge status-badge--${d.estado}">${d.estado}</span></td>
+          <td class="admin__actions">
+            <button class="edit-btn" onclick="updateDeliveryStatus(${d.id})">Actualizar</button>
+          </td>
+        </tr>`;
+      }).join('');
+      document.getElementById('metric-deliveries').textContent = deliveries.length.toLocaleString();
+    }
+
+    function updateDeliveryStatus(id) {
+      const delivery = deliveries.find(d => d.id === id);
+      if (!delivery) return;
+      const newStatus = prompt(`Nuevo estado para entrega #${id} (pendiente/acreditado/rechazado):`, delivery.estado);
+      if (newStatus && ['pendiente', 'acreditado', 'rechazado'].includes(newStatus)) {
+        delivery.estado = newStatus;
+        renderAdminDeliveries();
+        showToast(`Entrega #${id} actualizada a ${newStatus}`, 'success');
+      }
+    }
+
+    /* ---- Export CSV ---- */
+    function exportCSV(type) {
+      let csv = '';
+      if (type === 'users') {
+        csv = 'ID,Nombre,Apellido,Email,Delegación,Ecopuntos,KG Reciclados,CO₂ Evitado\n';
+        users.forEach(u => { csv += `${u.id},${u.nombre},${u.apellido},${u.email},${u.delegacion},${u.ecopuntos},${u.kg_reciclados},${u.co2_evitado}\n`; });
+      } else if (type === 'green-points') {
+        csv = 'ID,Nombre,Dirección,Delegación,Horario,Estado\n';
+        greenPoints.forEach(gp => { csv += `${gp.id},${gp.nombre},${gp.direccion},${gp.delegacion},${gp.horario},${gp.estado}\n`; });
+      } else if (type === 'deliveries') {
+        csv = 'ID,Usuario,Material,Cantidad,Puntos,Fecha,Estado\n';
+        const materialLabels = { plastico: 'Plástico', vidrio: 'Vidrio', papel: 'Papel', metal: 'Metal', organico: 'Orgánico', electronico: 'Electrónico' };
+        deliveries.forEach(d => {
+          const user = users.find(u => u.id === d.usuario_id);
+          csv += `${d.id},${user ? user.nombre + ' ' + user.apellido : '—'},${materialLabels[d.material_tipo]},${d.cantidad},${d.puntos_otorgados},${d.fecha},${d.estado}\n`;
+        });
+      }
+
+      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(blob);
+      link.download = `ecorecicla-${type}-${new Date().toISOString().split('T')[0]}.csv`;
+      link.click();
+      showToast(`${type} exportado como CSV`, 'success');
+    }
+
+    /* ---- Search ---- */
+    function openSearch() {
+      document.getElementById('search-overlay').classList.add('open');
+      setTimeout(() => document.getElementById('search-input').focus(), 100);
+    }
+
+    function closeSearch() {
+      document.getElementById('search-overlay').classList.remove('open');
+      document.getElementById('search-input').value = '';
+      document.getElementById('search-results').innerHTML = '<div class="search-box__empty">Escribe para buscar en el sitio</div>';
+    }
+
+    function closeSearchOutside(e) {
+      if (e.target === document.getElementById('search-overlay')) closeSearch();
+    }
+
+    function performSearch(query) {
+      const container = document.getElementById('search-results');
+      if (!query || query.length < 2) {
+        container.innerHTML = '<div class="search-box__empty">Escribe para buscar en el sitio</div>';
+        return;
+      }
+
+      const q = query.toLowerCase();
+      const results = searchIndex.filter(item => item.text.toLowerCase().includes(q));
+
+      if (results.length === 0) {
+        container.innerHTML = '<div class="search-box__empty">Sin resultados para "' + query + '"</div>';
+        return;
+      }
+
+      container.innerHTML = results.map(r => {
+        const highlighted = r.text.replace(new RegExp(`(${query})`, 'gi'), '<mark>$1</mark>');
+        return `<div class="search-box__result" onclick="navigateToResult('${r.section}')">
+          <svg class="search-box__result-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z"/><path d="m8 12 3 3 5-5"/></svg>
+          <span class="search-box__result-text">${highlighted}</span>
+        </div>`;
+      }).join('');
+    }
+
+    function navigateToResult(section) {
+      closeSearch();
+      const el = document.querySelector(section);
+      if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    document.addEventListener('keydown', function(e) {
+      if ((e.metaKey || e.ctrlKey) && e.key === 'k') { e.preventDefault(); openSearch(); }
+      if (e.key === 'Escape') closeSearch();
+    });
+
+    /* ---- Toast ---- */
+    function showToast(message, type = 'info') {
+      const container = document.getElementById('toast-container');
+      const toast = document.createElement('div');
+      toast.className = `toast toast--${type}`;
+      toast.textContent = message;
+      container.appendChild(toast);
+      requestAnimationFrame(() => { toast.classList.add('show'); });
+      setTimeout(() => {
+        toast.classList.remove('show');
+        setTimeout(() => toast.remove(), 400);
+      }, 3500);
+    }
+
+    /* ---- Mobile Menu ---- */
+    function toggleMobileMenu() {
+      const menu = document.getElementById('mobile-menu');
+      const hamburger = document.getElementById('hamburger');
+      menu.classList.toggle('open');
+      const isOpen = menu.classList.contains('open');
+      hamburger.children[0].style.transform = isOpen ? 'rotate(45deg) translate(4px, 4px)' : '';
+      hamburger.children[1].style.opacity = isOpen ? '0' : '1';
+      hamburger.children[2].style.transform = isOpen ? 'rotate(-45deg) translate(4px, -4px)' : '';
+    }
+
+    function closeMobileMenu() {
+      const menu = document.getElementById('mobile-menu');
+      const hamburger = document.getElementById('hamburger');
+      menu.classList.remove('open');
+      hamburger.children[0].style.transform = '';
+      hamburger.children[1].style.opacity = '';
+      hamburger.children[2].style.transform = '';
+    }
+
+    /* ---- Scroll Animations ---- */
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+        }
+      });
+    }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+
+    document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+
+    /* ---- Nav Scroll Effect ---- */
+    window.addEventListener('scroll', () => {
+      document.getElementById('nav').classList.toggle('scrolled', window.scrollY > 20);
+    });
+
+    /* ---- Counter Animation ---- */
+    function animateCounters() {
+      document.querySelectorAll('[data-count]').forEach(el => {
+        const target = parseFloat(el.dataset.count);
+        const suffix = el.dataset.suffix || '';
+        const prefix = el.dataset.prefix || '';
+        const isDecimal = target % 1 !== 0;
+        const duration = 1500;
+        const start = performance.now();
+
+        function update(now) {
+          const elapsed = now - start;
+          const progress = Math.min(elapsed / duration, 1);
+          const eased = 1 - Math.pow(1 - progress, 3);
+          const current = target * eased;
+
+          if (isDecimal) {
+            el.textContent = prefix + current.toFixed(1) + suffix;
+          } else {
+            el.textContent = prefix + Math.floor(current).toLocaleString() + suffix;
+          }
+
+          if (progress < 1) requestAnimationFrame(update);
+        }
+        requestAnimationFrame(update);
+      });
+    }
+
+    const heroObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          animateCounters();
+          heroObserver.disconnect();
+        }
+      });
+    }, { threshold: 0.3 });
+
+    const heroStats = document.querySelector('.hero__stats');
+    if (heroStats) heroObserver.observe(heroStats);
+  </script>
+
+
+<script data-od-snapshot-bridge="">(function(){
+  function copyComputedStyle(source, target){
+    if (!source || !target || source.nodeType !== 1 || target.nodeType !== 1) return;
+    var computed = window.getComputedStyle(source);
+    var style = target.getAttribute('style') || '';
+    for (var i = 0; i < computed.length; i++){
+      var prop = computed[i];
+      style += prop + ':' + computed.getPropertyValue(prop) + ';';
+    }
+    target.setAttribute('style', style);
+  }
+  function syncElementState(source, target){
+    var tag = source.tagName ? source.tagName.toLowerCase() : '';
+    if (tag === 'img' && source.currentSrc) target.setAttribute('src', source.currentSrc);
+    if (tag === 'input' || tag === 'textarea') target.setAttribute('value', source.value || '');
+    if (tag === 'canvas') {
+      try {
+        var img = document.createElement('img');
+        img.setAttribute('src', source.toDataURL('image/png'));
+        img.setAttribute('style', target.getAttribute('style') || '');
+        target.parentNode && target.parentNode.replaceChild(img, target);
+      } catch (_) {}
+    }
+  }
+  function inlineSnapshotStyles(originalRoot, cloneRoot){
+    copyComputedStyle(originalRoot, cloneRoot);
+    syncElementState(originalRoot, cloneRoot);
+    var originals = originalRoot.querySelectorAll('*');
+    var clones = cloneRoot.querySelectorAll('*');
+    var count = Math.min(originals.length, clones.length);
+    for (var i = 0; i < count; i++){
+      copyComputedStyle(originals[i], clones[i]);
+      syncElementState(originals[i], clones[i]);
+    }
+    var scripts = cloneRoot.querySelectorAll('script');
+    for (var s = scripts.length - 1; s >= 0; s--) scripts[s].remove();
+  }
+  function waitForImages(){
+    var imgs = Array.prototype.slice.call(document.images || []);
+    return Promise.all(imgs.map(function(img){
+      if (img.complete) return Promise.resolve();
+      return new Promise(function(resolve){
+        img.addEventListener('load', resolve, { once: true });
+        img.addEventListener('error', resolve, { once: true });
+      });
+    }));
+  }
+  function renderSnapshot(id){
+    var w = Math.max(1, window.innerWidth || document.documentElement.clientWidth || 1);
+    var h = Math.max(1, window.innerHeight || document.documentElement.clientHeight || 1);
+    var dpr = window.devicePixelRatio || 1;
+    var docW = Math.max(w, document.documentElement.scrollWidth || 0, document.body ? document.body.scrollWidth : 0);
+    var docH = Math.max(h, document.documentElement.scrollHeight || 0, document.body ? document.body.scrollHeight : 0);
+    var clone = document.documentElement.cloneNode(true);
+    clone.setAttribute('xmlns', 'http://www.w3.org/1999/xhtml');
+    inlineSnapshotStyles(document.documentElement, clone);
+    var serializer = new XMLSerializer();
+    var html = serializer.serializeToString(clone);
+    var svg = '<svg xmlns="http://www.w3.org/2000/svg" width="' + w + '" height="' + h + '" viewBox="0 0 ' + w + ' ' + h + '">' +
+      '<foreignObject x="' + (-window.scrollX || 0) + '" y="' + (-window.scrollY || 0) + '" width="' + docW + '" height="' + docH + '">' +
+      html +
+      '</foreignObject></svg>';
+    var img = new Image();
+    img.onload = function(){
+      try {
+        var canvas = document.createElement('canvas');
+        canvas.width = Math.max(1, Math.floor(w * dpr));
+        canvas.height = Math.max(1, Math.floor(h * dpr));
+        var ctx = canvas.getContext('2d');
+        if (!ctx) throw new Error('no 2d context');
+        ctx.scale(dpr, dpr);
+        ctx.drawImage(img, 0, 0, w, h);
+        window.parent.postMessage({ type: 'od:snapshot:result', id: id, dataUrl: canvas.toDataURL('image/png'), w: canvas.width, h: canvas.height }, '*');
+      } catch (err) {
+        window.parent.postMessage({ type: 'od:snapshot:result', id: id, error: String(err && err.message || err) }, '*');
+      }
+    };
+    img.onerror = function(){
+      window.parent.postMessage({ type: 'od:snapshot:result', id: id, error: 'snapshot image failed' }, '*');
+    };
+    img.src = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svg);
+  }
+  window.addEventListener('message', function(ev){
+    var data = ev && ev.data;
+    if (!data || data.type !== 'od:snapshot' || !data.id) return;
+    waitForImages().then(function(){ renderSnapshot(String(data.id)); });
+  });
+})();</script><script data-od-srcdoc-transport-activation="">(function(){
+  window.addEventListener('message', function(ev){
+    var data = ev && ev.data;
+    if (!data || data.type !== 'od:srcdoc-transport-activate' || typeof data.html !== 'string') return;
+    document.open();
+    document.write(data.html);
+    document.close();
+  });
+})();</script></body></html>

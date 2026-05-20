@@ -1,0 +1,25 @@
+# EcoRecicla — Render Deployment Config
+# 1. Create a PlanetScale database
+# 2. Add the connection details as environment variables in Render dashboard
+
+services:
+  - type: web
+    name: ecorecicla
+    runtime: php
+    region: oregon
+    plan: free
+    buildCommand: composer install
+    startCommand: php -S 0.0.0.0:$PORT index.php
+    envVars:
+      - key: DB_HOST
+        value: CHANGE_ME.aws.connect.psdb.cloud
+      - key: DB_PORT
+        value: "3306"
+      - key: DB_NAME
+        value: ecorecicla
+      - key: DB_USER
+        value: CHANGE_ME
+      - key: DB_PASS
+        value: CHANGE_ME
+      - key: DB_SSL
+        value: "true"

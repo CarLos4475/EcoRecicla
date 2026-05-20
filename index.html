@@ -1,0 +1,709 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>EcoRecicla — Recicla. Gana. Transforma.</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,700;1,9..40,300;1,9..40,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <!-- Ticker -->
+  <div class="ticker" aria-label="Últimas novedades">
+    <div class="ticker__track" id="ticker-track">
+      <span class="ticker__item">Nuevo punto verde en Coyoacán — abre Lun–Sáb 8–18h</span>
+      <span class="ticker__item">Doble puntos en electrónicos durante mayo</span>
+      <span class="ticker__item">1,240 usuarios activos en CDMX</span>
+      <span class="ticker__item">8.4 toneladas recicladas este trimestre</span>
+      <span class="ticker__item">Promo: Café gratis por 50 ecopuntos</span>
+      <span class="ticker__item">Evento comunitario de reciclaje — Xochimilco, 15 de junio</span>
+      <span class="ticker__item">Nuevo punto verde en Coyoacán — abre Lun–Sáb 8–18h</span>
+      <span class="ticker__item">Doble puntos en electrónicos durante mayo</span>
+      <span class="ticker__item">1,240 usuarios activos en CDMX</span>
+      <span class="ticker__item">8.4 toneladas recicladas este trimestre</span>
+      <span class="ticker__item">Promo: Café gratis por 50 ecopuntos</span>
+      <span class="ticker__item">Evento comunitario de reciclaje — Xochimilco, 15 de junio</span>
+    </div>
+  </div>
+
+  <!-- Navigation -->
+  <nav class="nav" id="nav">
+    <div class="nav__inner">
+      <a href="#" class="nav__logo">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M7 19H4.815a1.83 1.83 0 0 1-1.57-.881 1.785 1.785 0 0 1-.004-1.784L7.196 9.5"></path>
+          <path d="M11 19h8.203a1.83 1.83 0 0 0 1.556-.888 1.785 1.785 0 0 0 .007-1.775l-1.14-1.719"></path>
+          <path d="m14 16-3 5 3 5"></path>
+          <path d="M8.293 9.757 4.424 3.87a1.83 1.83 0 0 1 .017-1.799 1.785 1.785 0 0 1 1.57-.871h4.118"></path>
+          <path d="m15.707 14.243 3.871 5.887a1.83 1.83 0 0 1-.018 1.799 1.785 1.785 0 0 1-1.57.871h-4.118"></path>
+        </svg>
+        EcoRecicla
+      </a>
+      <ul class="nav__links">
+        <li><a href="#servicios">Servicios</a></li>
+        <li><a href="#materiales">Materiales</a></li>
+        <li><a href="#consultas">Consultas</a></li>
+        <li><a href="#puntos-verdes">Puntos Verdes</a></li>
+        <li><a href="#novedades">Novedades</a></li>
+        <li><a href="#admin">Admin</a></li>
+      </ul>
+      <button class="nav__cta" onclick="openRegister()">Registrarse</button>
+      <button class="nav__hamburger" id="hamburger" aria-label="Menú" onclick="toggleMobileMenu()">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+    <div class="nav__mobile" id="mobile-menu">
+      <a href="#servicios" onclick="closeMobileMenu()">Servicios</a>
+      <a href="#materiales" onclick="closeMobileMenu()">Materiales</a>
+      <a href="#consultas" onclick="closeMobileMenu()">Consultas</a>
+      <a href="#puntos-verdes" onclick="closeMobileMenu()">Puntos Verdes</a>
+      <a href="#novedades" onclick="closeMobileMenu()">Novedades</a>
+      <a href="#admin" onclick="closeMobileMenu()">Admin</a>
+    </div>
+  </nav>
+
+  <!-- Hero -->
+  <section class="hero" id="hero">
+    <div class="hero__inner">
+      <p class="hero__eyebrow">Plataforma ciudadana de reciclaje — CDMX 2026</p>
+      <h1 class="hero__title">ECO<em>RECICLA</em></h1>
+      <p class="hero__subtitle">Recicla. Gana. Transforma. Tu esfuerzo por el planeta tiene recompensa.</p>
+      <div class="hero__actions">
+        <a href="#consultas" class="btn btn--primary">Registrar entrega</a>
+        <a href="#puntos-verdes" class="btn btn--outline">Ver puntos verdes</a>
+      </div>
+      <div class="hero__stats">
+        <div class="hero__stat">
+          <span class="hero__stat-num" data-count="1240">0</span>
+          <span class="hero__stat-label">Usuarios activos</span>
+        </div>
+        <div class="hero__stat">
+          <span class="hero__stat-num" data-count="8.4" data-suffix=" T">0</span>
+          <span class="hero__stat-label">Toneladas recicladas</span>
+        </div>
+        <div class="hero__stat">
+          <span class="hero__stat-num" data-count="23">0</span>
+          <span class="hero__stat-label">Puntos verdes</span>
+        </div>
+        <div class="hero__stat">
+          <span class="hero__stat-num" data-count="47500" data-prefix="">0</span>
+          <span class="hero__stat-label">Ecopuntos canjeados</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Quick Access -->
+  <section class="quick-access" id="acceso-rapido">
+    <div class="container">
+      <div class="quick-access__grid">
+        <a href="#consultas" class="quick-access__item">
+          <svg class="quick-access__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14"></path><path d="M5 12h14"></path></svg>
+          <span class="quick-access__label">Registrar</span>
+        </a>
+        <a href="#consultas" class="quick-access__item">
+          <svg class="quick-access__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.3-4.3"></path></svg>
+          <span class="quick-access__label">Consultar</span>
+        </a>
+        <a href="#consultas" class="quick-access__item">
+          <svg class="quick-access__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-6.219-8.56"></path></svg>
+          <span class="quick-access__label">Historial</span>
+        </a>
+        <a href="#consultas" class="quick-access__item">
+          <svg class="quick-access__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 12v6a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-6"></path><path d="M4 8h16"></path><path d="M8 4v4"></path><path d="M12 4v4"></path><path d="M16 4v4"></path></svg>
+          <span class="quick-access__label">Canjear</span>
+        </a>
+        <a href="#puntos-verdes" class="quick-access__item">
+          <svg class="quick-access__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+          <span class="quick-access__label">Mapa</span>
+        </a>
+        <a href="#" class="quick-access__item" onclick="openSearch(); return false;">
+          <svg class="quick-access__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.3-4.3"></path></svg>
+          <span class="quick-access__label">Buscar</span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Services -->
+  <section class="services" id="servicios">
+    <div class="container">
+      <div class="section-header fade-up">
+        <span class="tag tag--green section-header__tag">SERVICIOS</span>
+        <h2 class="section-header__title">Todo lo que <em>EcoRecicla</em> hace por ti</h2>
+        <p class="section-header__desc">Una plataforma completa para gestionar tu reciclaje, acumular puntos y canjearlos en comercios locales de CDMX.</p>
+      </div>
+      <div class="services__grid">
+        <div class="service-card fade-up">
+          <div class="service-card__num">01</div>
+          <h3 class="service-card__title">Información general</h3>
+          <p class="service-card__desc">Conoce el impacto colectivo, cómo funciona el sistema de ecopuntos y qué materiales puedes reciclar.</p>
+        </div>
+        <div class="service-card fade-up">
+          <div class="service-card__num">02</div>
+          <h3 class="service-card__title">Consulta de puntos</h3>
+          <p class="service-card__desc">Revisa tu saldo de ecopuntos y tu historial de entregas en cualquier momento desde tu cuenta.</p>
+        </div>
+        <div class="service-card fade-up">
+          <div class="service-card__num">03</div>
+          <h3 class="service-card__title">Registro de entregas</h3>
+          <p class="service-card__desc">Registra cada entrega de material reciclable y acumula puntos automáticamente según el tipo y peso.</p>
+        </div>
+        <div class="service-card fade-up">
+          <div class="service-card__num">04</div>
+          <h3 class="service-card__title">Canje de recompensas</h3>
+          <p class="service-card__desc">Intercambia tus ecopuntos por café gratis, descuentos en transporte, productos y más.</p>
+        </div>
+        <div class="service-card fade-up">
+          <div class="service-card__num">05</div>
+          <h3 class="service-card__title">Puntos verdes</h3>
+          <p class="service-card__desc">Encuentra el centro de acopio más cercano con su horario, materiales aceptados y estado operativo.</p>
+        </div>
+        <div class="service-card fade-up">
+          <div class="service-card__num">06</div>
+          <h3 class="service-card__title">Panel de administración</h3>
+          <p class="service-card__desc">Gestiona usuarios, puntos verdes, entregas y exporta datos para análisis y reportes.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- How It Works -->
+  <section class="how-it-works" id="como-funciona">
+    <div class="container">
+      <div class="section-header fade-up">
+        <span class="tag section-header__tag" style="color:var(--green-100);border-color:rgba(255,255,255,0.15)">CÓMO FUNCIONA</span>
+        <h2 class="section-header__title">Cuatro pasos para <em>empezar</em></h2>
+        <p class="section-header__desc">El proceso es simple: lleva tu material, regístralo, acumula puntos y canjéalos.</p>
+      </div>
+      <div class="steps">
+        <div class="step fade-up">
+          <h3 class="step__title">Separa tu material</h3>
+          <p class="step__desc">Clasifica plástico, vidrio, papel, metal, orgánicos o electrónicos según las guías de cada material.</p>
+        </div>
+        <div class="step fade-up">
+          <h3 class="step__title">Lleva a un punto verde</h3>
+          <p class="step__desc">Encuentra el centro de acopio más cercano en tu delegación. Horarios de Lun a Sáb.</p>
+        </div>
+        <div class="step fade-up">
+          <h3 class="step__title">Registra tu entrega</h3>
+          <p class="step__desc">Un operador verifica y registra tu entrega. Los puntos se calculan automáticamente por tipo y peso.</p>
+        </div>
+        <div class="step fade-up">
+          <h3 class="step__title">Canjea recompensas</h3>
+          <p class="step__desc">Usa tus ecopuntos en comercios locales: café, transporte, descuentos y productos sustentables.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Materials -->
+  <section class="materials" id="materiales">
+    <div class="container">
+      <div class="section-header fade-up">
+        <span class="tag tag--green section-header__tag">MATERIALES RECICLABLES</span>
+        <h2 class="section-header__title">Qué puedes <em>reciclar</em></h2>
+        <p class="section-header__desc">Cada material tiene un valor en ecopuntos. Conoce las tasas y cómo preparar cada tipo para entrega.</p>
+      </div>
+    </div>
+    <div class="container" style="padding-top:0;">
+      <div class="materials__grid fade-up">
+        <div class="material-card">
+          <svg class="material-card__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z"></path><path d="m8 12 3 3 5-5"></path></svg>
+          <div class="material-card__content">
+            <span class="tag tag--green material-card__tag">PLÁSTICO</span>
+            <h3 class="material-card__title">Plástico PET y envases</h3>
+            <p class="material-card__desc">Botellas de agua, refrescos, envases de shampoo y productos de limpieza. Enjuagar y aplastar antes de entregar.</p>
+            <span class="material-card__points">+5 pts / 100g</span>
+          </div>
+        </div>
+        <div class="material-card">
+          <svg class="material-card__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z"></path><path d="m8 12 3 3 5-5"></path></svg>
+          <div class="material-card__content">
+            <span class="tag tag--teal material-card__tag">VIDRIO</span>
+            <h3 class="material-card__title">Vidrio</h3>
+            <p class="material-card__desc">Botellas, frascos y envases de vidrio. Sin tapas ni etiquetas. Separar por color si es posible.</p>
+            <span class="material-card__points">+4 pts / 100g</span>
+          </div>
+        </div>
+        <div class="material-card">
+          <svg class="material-card__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z"></path><path d="m8 12 3 3 5-5"></path></svg>
+          <div class="material-card__content">
+            <span class="tag tag--amber material-card__tag">PAPEL</span>
+            <h3 class="material-card__title">Papel y cartón</h3>
+            <p class="material-card__desc">Periódicos, revistas, cajas de cartón, hojas de papel. Sin contaminar con alimentos.</p>
+            <span class="material-card__points">+3 pts / 100g</span>
+          </div>
+        </div>
+        <div class="material-card">
+          <svg class="material-card__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z"></path><path d="m8 12 3 3 5-5"></path></svg>
+          <div class="material-card__content">
+            <span class="tag tag--green material-card__tag">METAL</span>
+            <h3 class="material-card__title">Metal</h3>
+            <p class="material-card__desc">Latas de aluminio, hojalata, tapas metálicas. Aplastar latas para optimizar espacio.</p>
+            <span class="material-card__points">+8 pts / 100g</span>
+          </div>
+        </div>
+        <div class="material-card">
+          <svg class="material-card__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z"></path><path d="m8 12 3 3 5-5"></path></svg>
+          <div class="material-card__content">
+            <span class="tag tag--teal material-card__tag">ORGÁNICO</span>
+            <h3 class="material-card__title">Orgánicos</h3>
+            <p class="material-card__desc">Restos de comida, cáscaras, residuos de jardín. Para composta y biogás comunitario.</p>
+            <span class="material-card__points">+2 pts / 100g</span>
+          </div>
+        </div>
+        <div class="material-card material-card--wide">
+          <svg class="material-card__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="12" rx="2"></rect><path d="M12 12h.01"></path><path d="M17 12h.01"></path><path d="M7 12h.01"></path></svg>
+          <div class="material-card__content">
+            <span class="tag tag--amber material-card__tag">ELECTRÓNICOS</span>
+            <h3 class="material-card__title">Electrónicos (RAEE)</h3>
+            <p class="material-card__desc">Celulares, baterías, cables, cargadores, tablets, laptops. Máximo valor por pieza — no por peso.</p>
+            <span class="material-card__points">+20 pts / pieza</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Consultations -->
+  <section class="consultations" id="consultas">
+    <div class="container">
+      <div class="section-header fade-up">
+        <span class="tag tag--green section-header__tag">CONSULTAS Y GESTIÓN</span>
+        <h2 class="section-header__title">Gestiona tu <em>reciclaje</em></h2>
+        <p class="section-header__desc">Registra entregas, consulta tu historial, revisa tus puntos y canjea recompensas.</p>
+      </div>
+
+      <div class="tabs fade-up" role="tablist">
+        <button class="tab active" role="tab" data-tab="registrar" onclick="switchTab('registrar')">Registrar entrega</button>
+        <button class="tab" role="tab" data-tab="consultar" onclick="switchTab('consultar')">Consultar puntos</button>
+        <button class="tab" role="tab" data-tab="historial" onclick="switchTab('historial')">Historial</button>
+        <button class="tab" role="tab" data-tab="canjear" onclick="switchTab('canjear')">Canjear recompensas</button>
+      </div>
+
+      <!-- Tab: Registrar -->
+      <div class="tab-panel active" id="panel-registrar">
+        <div class="form-group">
+          <label for="reg-email">Email de cuenta</label>
+          <input type="email" id="reg-email" placeholder="tu@email.com">
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="reg-material">Tipo de material</label>
+            <select id="reg-material">
+              <option value="">Seleccionar...</option>
+              <option value="plastico">Plástico — 5 pts/100g</option>
+              <option value="vidrio">Vidrio — 4 pts/100g</option>
+              <option value="papel">Papel/Cartón — 3 pts/100g</option>
+              <option value="metal">Metal — 8 pts/100g</option>
+              <option value="organico">Orgánico — 2 pts/100g</option>
+              <option value="electronico">Electrónico — 20 pts/pieza</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="reg-cantidad" id="reg-cantidad-label">Cantidad (gramos)</label>
+            <input type="number" id="reg-cantidad" placeholder="Ej: 500" min="0">
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="reg-punto">Punto verde</label>
+          <select id="reg-punto">
+            <option value="">Seleccionar punto verde...</option>
+            <option value="1">PV Coyoacán — Av. Universidad 1234</option>
+            <option value="2">PV Del Valle — Insurgentes Sur 567</option>
+            <option value="3">PV Polanco — Av. Homero 890</option>
+            <option value="4">PV Xochimilco — Calz. de las Flores 123</option>
+            <option value="5">PV Tlalpan — Av. Insurgentes Sur 2345</option>
+          </select>
+        </div>
+        <button class="btn btn--primary" onclick="registerDelivery()">Registrar entrega</button>
+        <div class="points-result" id="points-result"></div>
+      </div>
+
+      <!-- Tab: Consultar -->
+      <div class="tab-panel" id="panel-consultar">
+        <div class="form-group">
+          <label for="cons-email">Email de cuenta</label>
+          <input type="email" id="cons-email" placeholder="tu@email.com">
+        </div>
+        <button class="btn btn--primary" onclick="consultPoints()">Consultar</button>
+        <div class="points-result" id="consult-result"></div>
+      </div>
+
+      <!-- Tab: Historial -->
+      <div class="tab-panel" id="panel-historial">
+        <div class="form-group">
+          <label for="hist-email">Email de cuenta</label>
+          <input type="email" id="hist-email" placeholder="tu@email.com">
+        </div>
+        <button class="btn btn--primary" onclick="showHistory()">Ver historial</button>
+        <div id="history-content" style="margin-top:var(--space-lg);overflow-x:auto;"></div>
+      </div>
+
+      <!-- Tab: Canjear -->
+      <div class="tab-panel" id="panel-canjear">
+        <p style="font-size:0.9rem;color:var(--muted);margin-bottom:var(--space-lg);">
+          Tu saldo actual: <strong style="color:var(--green-600);font-family:var(--font-display);font-size:1.2rem;" id="user-balance">0</strong> ecopuntos
+        </p>
+        <div class="redeem-grid" id="rewards-grid">
+          <!-- Poblado por JS -->
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Green Points -->
+  <section class="green-points" id="puntos-verdes">
+    <div class="container">
+      <div class="section-header fade-up">
+        <span class="tag tag--green section-header__tag">PUNTOS VERDES</span>
+        <h2 class="section-header__title">Centros de <em>acopio</em></h2>
+        <p class="section-header__desc">Encuentra tu punto verde más cercano. Cada delegación tiene al menos un centro activo.</p>
+      </div>
+      <div class="gp-layout fade-up">
+        <div class="gp-map">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+          <span class="gp-map__label">Mapa interactivo</span>
+          <span style="font-size:0.8rem;">Próximamente — integración con mapas de CDMX</span>
+        </div>
+        <div class="gp-list" id="gp-list">
+          <!-- Poblado por JS -->
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- News & Promotions -->
+  <section class="news" id="novedades">
+    <div class="container">
+      <div class="section-header fade-up">
+        <span class="tag tag--green section-header__tag">NOVEDADES Y PROMOCIONES</span>
+        <h2 class="section-header__title">Lo último en <em>EcoRecicla</em></h2>
+      </div>
+
+      <div class="news__layout fade-up">
+        <div class="news__featured">
+          <span class="tag news__featured-tag">DESTACADO</span>
+          <h3 class="news__featured-title">CDMX recicla 8.4 toneladas en el primer trimestre de 2026</h3>
+          <p class="news__featured-desc">La plataforma EcoRecicla alcanzó un récord histórico con más de 1,200 usuarios activos y 23 puntos verdes operando en toda la ciudad.</p>
+        </div>
+        <div class="news__sidebar">
+          <div class="news__side-item">
+            <span class="tag tag--teal">EVENTO</span>
+            <h4 class="news__side-title">Jornada de reciclaje en Xochimilco — 15 de junio</h4>
+          </div>
+          <div class="news__side-item">
+            <span class="tag tag--amber">PROMO</span>
+            <h4 class="news__side-title">Doble puntos en electrónicos durante todo mayo</h4>
+          </div>
+          <div class="news__side-item">
+            <span class="tag tag--green">NUEVO</span>
+            <h4 class="news__side-title">Nuevo punto verde abre en Iztapalapa</h4>
+          </div>
+        </div>
+      </div>
+
+      <div class="promos fade-up" id="promos-list">
+        <!-- Poblado por JS -->
+      </div>
+    </div>
+  </section>
+
+  <!-- Admin -->
+  <section class="admin" id="admin">
+    <div class="container">
+      <div class="section-header fade-up">
+        <span class="tag tag--green section-header__tag">ADMINISTRACIÓN</span>
+        <h2 class="section-header__title">Panel de <em>control</em></h2>
+      </div>
+
+      <div class="admin__login fade-up" id="admin-login">
+        <h3 class="admin__login-title">Acceso protegido</h3>
+        <p class="admin__login-desc">Ingresa tus credenciales de administrador para acceder al panel de gestión.</p>
+        <div class="form-group">
+          <label for="admin-user">Usuario</label>
+          <input type="text" id="admin-user" placeholder="admin">
+        </div>
+        <div class="form-group">
+          <label for="admin-pass">Contraseña</label>
+          <input type="password" id="admin-pass" placeholder="••••••••">
+        </div>
+        <button class="btn btn--primary" onclick="adminLogin()">Iniciar sesión</button>
+      </div>
+
+      <div class="admin__dashboard" id="admin-dashboard">
+        <div class="admin__metrics">
+          <div class="metric-card">
+            <div class="metric-card__num" id="metric-users">0</div>
+            <div class="metric-card__label">Usuarios</div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-card__num" id="metric-points">0</div>
+            <div class="metric-card__label">Puntos verdes</div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-card__num" id="metric-deliveries">0</div>
+            <div class="metric-card__label">Entregas</div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-card__num" id="metric-tons">0 T</div>
+            <div class="metric-card__label">Recicladas</div>
+          </div>
+        </div>
+
+        <div class="admin__tabs">
+          <button class="admin__tab active" onclick="switchAdminTab('users')">Usuarios</button>
+          <button class="admin__tab" onclick="switchAdminTab('green-points')">Puntos Verdes</button>
+          <button class="admin__tab" onclick="switchAdminTab('deliveries')">Entregas</button>
+        </div>
+
+        <div class="admin__panel active" id="admin-panel-users">
+          <div class="admin__add-form">
+            <input type="text" id="new-user-name" placeholder="Nombre">
+            <input type="text" id="new-user-lastname" placeholder="Apellido">
+            <input type="email" id="new-user-email" placeholder="Email">
+            <select id="new-user-delegacion">
+              <option value="">Delegación</option>
+              <option value="Coyoacán">Coyoacán</option>
+              <option value="Del Valle">Del Valle</option>
+              <option value="Polanco">Polanco</option>
+              <option value="Xochimilco">Xochimilco</option>
+              <option value="Tlalpan">Tlalpan</option>
+              <option value="Iztapalapa">Iztapalapa</option>
+            </select>
+            <button class="btn btn--primary" style="font-size:0.6rem;padding:0.5em 1em;" onclick="addUser()">Agregar</button>
+          </div>
+          <div style="overflow-x:auto;">
+            <table class="admin__table">
+              <thead>
+                <tr>
+                  <th>Nombre</th>
+                  <th>Email</th>
+                  <th>Delegación</th>
+                  <th>Ecopuntos</th>
+                  <th>KG</th>
+                  <th>Acciones</th>
+                </tr>
+              </thead>
+              <tbody id="admin-users-body"></tbody>
+            </table>
+          </div>
+          <button class="btn btn--outline" style="border-color:var(--border);color:var(--muted);margin-top:var(--space-md);font-size:0.6rem;padding:0.5em 1em;" onclick="exportCSV('usuarios')">Exportar CSV</button>
+        </div>
+
+        <div class="admin__panel" id="admin-panel-green-points">
+          <div class="admin__add-form">
+            <input type="text" id="new-gp-name" placeholder="Nombre">
+            <input type="text" id="new-gp-addr" placeholder="Dirección">
+            <select id="new-gp-delegacion">
+              <option value="">Delegación</option>
+              <option value="Coyoacán">Coyoacán</option>
+              <option value="Del Valle">Del Valle</option>
+              <option value="Polanco">Polanco</option>
+              <option value="Xochimilco">Xochimilco</option>
+              <option value="Tlalpan">Tlalpan</option>
+            </select>
+            <input type="text" id="new-gp-hours" placeholder="Horario">
+            <button class="btn btn--primary" style="font-size:0.6rem;padding:0.5em 1em;" onclick="addGreenPoint()">Agregar</button>
+          </div>
+          <div style="overflow-x:auto;">
+            <table class="admin__table">
+              <thead>
+                <tr>
+                  <th>Nombre</th>
+                  <th>Dirección</th>
+                  <th>Delegación</th>
+                  <th>Horario</th>
+                  <th>Estado</th>
+                  <th>Acciones</th>
+                </tr>
+              </thead>
+              <tbody id="admin-gp-body"></tbody>
+            </table>
+          </div>
+          <button class="btn btn--outline" style="border-color:var(--border);color:var(--muted);margin-top:var(--space-md);font-size:0.6rem;padding:0.5em 1em;" onclick="exportCSV('puntos_verdes')">Exportar CSV</button>
+        </div>
+
+        <div class="admin__panel" id="admin-panel-deliveries">
+          <div style="overflow-x:auto;">
+            <table class="admin__table">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Usuario</th>
+                  <th>Material</th>
+                  <th>Cantidad</th>
+                  <th>Puntos</th>
+                  <th>Fecha</th>
+                  <th>Estado</th>
+                  <th>Acciones</th>
+                </tr>
+              </thead>
+              <tbody id="admin-deliveries-body"></tbody>
+            </table>
+          </div>
+          <button class="btn btn--outline" style="border-color:var(--border);color:var(--muted);margin-top:var(--space-md);font-size:0.6rem;padding:0.5em 1em;" onclick="exportCSV('entregas')">Exportar CSV</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer" id="footer">
+    <div class="container">
+      <div class="footer__grid">
+        <div>
+          <div class="footer__brand-name">EcoRecicla</div>
+          <p class="footer__brand-desc">Plataforma ciudadana de reciclaje con sistema de recompensas. Construyendo una CDMX más limpia, un ecopunto a la vez.</p>
+        </div>
+        <div class="footer__col">
+          <div class="footer__col-title">Plataforma</div>
+          <a href="#servicios">Servicios</a>
+          <a href="#materiales">Materiales</a>
+          <a href="#como-funciona">Cómo funciona</a>
+          <a href="#consultas">Consultas</a>
+        </div>
+        <div class="footer__col">
+          <div class="footer__col-title">Comunidad</div>
+          <a href="#puntos-verdes">Puntos verdes</a>
+          <a href="#novedades">Novedades</a>
+          <a href="#">Eventos</a>
+          <a href="#">Blog</a>
+        </div>
+        <div class="footer__col">
+          <div class="footer__col-title">Legal</div>
+          <a href="#">Privacidad</a>
+          <a href="#">Términos</a>
+          <a href="#">Contacto</a>
+          <a href="#admin">Admin</a>
+        </div>
+      </div>
+      <div class="footer__bottom">
+        <span>© 2026 EcoRecicla — Hackathon CDMX</span>
+        <span>Hecho con propósito en México</span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Search Overlay -->
+  <div class="search-overlay" id="search-overlay" onclick="closeSearchOutside(event)">
+    <div class="search-box">
+      <div class="search-box__input">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.3-4.3"></path></svg>
+        <input type="text" id="search-input" placeholder="Buscar en EcoRecicla..." oninput="performSearch(this.value)">
+      </div>
+      <div class="search-box__results" id="search-results">
+        <div class="search-box__empty">Escribe para buscar en el sitio</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Container -->
+  <div class="toast-container" id="toast-container"></div>
+
+  <!-- Registration Modal -->
+  <div class="register-overlay" id="register-overlay" onclick="closeRegisterOutside(event)">
+    <div class="register-box">
+      <button class="register-close" onclick="closeRegister()">&times;</button>
+      <h3 class="register-title">Crear cuenta</h3>
+      <p class="register-desc">Regístrate para empezar a acumular ecopuntos.</p>
+      <div class="form-group">
+        <label for="reg-name">Nombre</label>
+        <input type="text" id="reg-name" placeholder="María">
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label for="reg-lastname">Apellido</label>
+          <input type="text" id="reg-lastname" placeholder="García">
+        </div>
+        <div class="form-group">
+          <label for="reg-delegacion">Delegación</label>
+          <select id="reg-delegacion">
+            <option value="">Seleccionar...</option>
+            <option value="Coyoacán">Coyoacán</option>
+            <option value="Del Valle">Del Valle</option>
+            <option value="Polanco">Polanco</option>
+            <option value="Xochimilco">Xochimilco</option>
+            <option value="Tlalpan">Tlalpan</option>
+            <option value="Iztapalapa">Iztapalapa</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="reg-email-reg">Email</label>
+        <input type="email" id="reg-email-reg" placeholder="tu@email.com">
+      </div>
+      <div class="form-group">
+        <label for="reg-password">Contraseña</label>
+        <input type="password" id="reg-password" placeholder="••••••••">
+      </div>
+      <button class="btn btn--primary" style="width:100%;justify-content:center;" onclick="registerUser()">Crear cuenta</button>
+    </div>
+  </div>
+
+  <script>
+    // localStorage shim for opencode
+    (function(){
+      function makeStore(){
+        var data = {};
+        var api = {
+          getItem: function(k){ return Object.prototype.hasOwnProperty.call(data, k) ? data[k] : null; },
+          setItem: function(k, v){ data[k] = String(v); },
+          removeItem: function(k){ delete data[k]; },
+          clear: function(){ data = {}; },
+          key: function(i){ return Object.keys(data)[i] || null; }
+        };
+        Object.defineProperty(api, 'length', { get: function(){ return Object.keys(data).length; } });
+        return api;
+      }
+      function tryShim(name){
+        var works = false;
+        try { works = !!window[name] && typeof window[name].getItem === 'function'; void window[name].length; }
+        catch (_) { works = false; }
+        if (works) return;
+        try { Object.defineProperty(window, name, { configurable: true, value: makeStore() }); }
+        catch (_) { try { window[name] = makeStore(); } catch (__) {} }
+      }
+      tryShim('localStorage');
+      tryShim('sessionStorage');
+      document.addEventListener('click', (e) => {
+        if (!e.target || !(e.target instanceof Element)) return;
+        var link = e.target.closest('a[href]');
+        if (!link) return;
+        var href = link.getAttribute('href');
+        if (href === null) return;
+        var isAnchor = href.startsWith('#') || href === '';
+        if (isAnchor) {
+          e.preventDefault();
+          if (href === '' || href === '#') {
+            window.scrollTo({ top: 0 });
+            history.replaceState(null, '', ' ');
+          } else {
+            var targetId = href.slice(1);
+            var target = targetId ? document.getElementById(targetId) : null;
+            if (target) {
+              target.scrollIntoView();
+              location.hash === href && history.replaceState(null, '', ' ');
+              location.hash = href;
+            }
+          }
+        } else if (link.getAttribute('target') === '_blank') {
+          e.preventDefault();
+          let safe = false;
+          try {
+            var url = new URL(href, location.href);
+            safe = url.protocol === 'http:' || url.protocol === 'https:' || url.protocol === 'mailto:';
+          } catch (_) {}
+          safe && window.open(href, '_blank', 'noopener,noreferrer');
+        }
+      });
+    })();
+  </script>
+
+  <script src="app.js"></script>
+</body>
+</html>
