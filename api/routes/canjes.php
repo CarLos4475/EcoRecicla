@@ -12,7 +12,7 @@ switch ($method) {
             if (empty($input[$field])) errorResponse("Campo '{$field}' es requerido");
         }
 
-        $stmt = $db->prepare("SELECT * FROM recompensas WHERE id = ? AND activo = 1");
+        $stmt = $db->prepare("SELECT * FROM recompensas WHERE id = ? AND activo = true");
         $stmt->execute([$input['recompensa_id']]);
         $recompensa = $stmt->fetch();
         if (!$recompensa) errorResponse('Recompensa no disponible', 404);

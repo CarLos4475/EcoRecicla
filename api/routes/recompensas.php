@@ -6,7 +6,7 @@ $db = getDB();
 
 switch ($method) {
     case 'GET':
-        $stmt = $db->query("SELECT * FROM recompensas WHERE activo = 1 ORDER BY costo_puntos ASC");
+        $stmt = $db->query("SELECT * FROM recompensas WHERE activo = true ORDER BY costo_puntos ASC");
         jsonResponse($stmt->fetchAll());
 
     default:
